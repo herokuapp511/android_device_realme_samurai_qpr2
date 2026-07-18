@@ -271,10 +271,18 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/gps.conf:$(TARGET_COPY_OUT_ODM)/etc/gps.conf
 
 # Health
+# Proprietary android.hardware.health@2.1-service.samurai is started from
+# init.qcom.rc; AOSP health-hal-2-1 is installed but disabled there.
 PRODUCT_PACKAGES += \
     android.hardware.health@2.1-impl:64 \
     android.hardware.health@2.1-impl.recovery \
     android.hardware.health@2.1-service
+
+# Lineage Health — charge control via existing mmi_charging_enable node
+PRODUCT_PACKAGES += \
+    vendor.lineage.health-service.default
+
+$(call soong_config_set,lineage_health,charging_control_charging_path,/sys/class/power_supply/battery/mmi_charging_enable)
 
 # HIDL
 PRODUCT_PACKAGES += \

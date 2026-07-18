@@ -1,0 +1,4 @@
+# Lineage Health charging control writes mmi_charging_enable under battery supply.
+# genfscon labels that tree as vendor_sysfs_battery_supply.
+allow hal_lineage_health_default vendor_sysfs_battery_supply:dir search;
+allow hal_lineage_health_default vendor_sysfs_battery_supply:file rw_file_perms;
