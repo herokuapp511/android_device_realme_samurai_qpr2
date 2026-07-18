@@ -230,15 +230,15 @@ PRODUCT_PACKAGES += \
     wvmkiller
 
 # Fingerprint
+# Device-local 2.3 wrapper: sysfs /sys/kernel/oppo_display/* + syshelper AIDL.
+# Do NOT use android.hardware.biometrics.fingerprint@2.3-service.oplus —
+# it requires /dev/oplus_display ioctls which this kernel does not provide.
 PRODUCT_PACKAGES += \
     android.hardware.biometrics.fingerprint@2.3-service.samurai
 
-# UDFPS extension: device-local build using sysfs/oppo_display paths.
-# hardware/oplus libudfps_extension.oplus uses /dev/oplus_display ioctls
-# which do not exist on samurai (device has /dev/oppo_display via sysfs).
 $(call soong_config_set,surfaceflinger,udfps_lib,//device/realme/samurai/fingerprint:libudfps_extension.samurai)
 
-# fingerprint (IFAA)
+# fingerprint (IFAA) — IFAAService from hardware/oplus; ifaamanager is local
 PRODUCT_PACKAGES += \
     IFAAService \
     ifaamanager
@@ -503,10 +503,11 @@ PRODUCT_PACKAGES += \
 PRODUCT_BOOT_JARS += \
     telephony-ext
 
-# Touch
+# Touch (hardware/oplus) — gesture bitmask from touch/include/
 PRODUCT_PACKAGES += \
     vendor.lineage.touch-service.oplus
 
+# HTPR (game_switch_enable) exists but left off; same as sm8150-common oplus trees.
 $(call soong_config_set_bool,OPLUS_LINEAGE_TOUCH_HAL,ENABLE_HTPR,false)
 $(call soong_config_set,OPLUS_LINEAGE_TOUCH_HAL,INCLUDE_DIR,$(LOCAL_PATH)/touch/include)
 
