@@ -84,6 +84,31 @@ The fingerprint HAL (`fingerprint/`) calls into `syshelper/` via AIDL to raise/l
 2. It calls `UdfpsHelper` (in `syshelper/`) to toggle `dimlayer_hbm` via the display driver sysfs node
 3. `getUdfpsDimZOrder()` controls the z-order of the dim layer
 
+**Icon asset:** AOSP ships a 1×1 transparent `udfps_icon_pressed`. Use a real white fingerprint glyph in the **static** SystemUI RRO:
+
+- `overlay/SystemUIRes/res/drawable-nodpi/udfps_icon_pressed.png` (preferred; always applied)
+- `overlay-lineage/.../drawable-nodpi/udfps_icon_pressed.png` (package-overlay path)
+
+Do **not** add `vendor.lineage.biometrics.fingerprint.inscreen` — it conflicts with the local 2.3 UDFPS stack.
+
+### Health / battery capacity
+Proprietary unit: `android.hardware.health@2.1-service.samurai` (init RC starts it; AOSP health unit is overridden/disabled).
+
+Sysfs **must** be labeled with **`genfscon`** (not only `file_contexts`):
+
+```text
+sepolicy/vendor/genfs_contexts  →  power_supply/battery + ac → vendor_sysfs_battery_supply
+```
+
+Without genfs labels, Settings can show ~1 mAh / 0% while kernel SOC is fine. Also keep `system_server` `dir search` on `vendor_sysfs_battery_supply` and health read allows on battery/usb supply.
+
+Do **not** set `ro.hardware.health=oplus` or fake `ro.battery.capacity` props — wrong for this tree. Design capacity for power stats stays in `overlay/.../power_profile.xml` (`battery.capacity` = 4000).
+
+### Flashlight / torch
+Do **not** set `ro.oplus.system.camera.flashlight=com.oppo.motor.flashlight`. That package is for pop-up motor cameras (e.g. Realme X2). **samurai (X2 Pro)** has a fixed front camera; the prop breaks QS torch. Use the standard `CameraManager` torch path. Multi-level torch strength still depends on camera HAL `FLASH_INFO_STRENGTH_*` metadata.
+
+Do **not** ship a stock/stub `android.hardware.light` service without a real device lights implementation.
+
 ### Device Variant Detection
 `init/init_samurai.cpp` runs at early boot and reads the `ro.boot.id.operators` property to distinguish variants, then calls `property_override()` to set the correct `ro.product.*` and `ro.build.*` values. This pattern is also used for RAM-tier-specific dalvik heap configurations.
 
