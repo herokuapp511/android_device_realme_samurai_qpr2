@@ -337,12 +337,16 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/media_profiles_V1_0.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_profiles_V1_0.xml \
     $(LOCAL_PATH)/configs/system_properties.xml:$(TARGET_COPY_OUT_VENDOR)/etc/system_properties.xml
 
-# Livedisplay
+# Livedisplay (hardware/oplus)
+# AF/SE need /dev/oplus_display ioctls — not present on samurai (oppo_display sysfs).
+# DM still useful: SDM/QDCM modes work even when seed ioctl is unavailable.
+# PA (default true) uses SDM picture adjustment, not oplus_display.
 PRODUCT_PACKAGES += \
     vendor.lineage.livedisplay-service.oplus
 
-$(call soong_config_set_bool,OPLUS_LINEAGE_LIVEDISPLAY_HAL,ENABLE_AF,true)
+$(call soong_config_set_bool,OPLUS_LINEAGE_LIVEDISPLAY_HAL,ENABLE_AF,false)
 $(call soong_config_set_bool,OPLUS_LINEAGE_LIVEDISPLAY_HAL,ENABLE_DM,true)
+$(call soong_config_set_bool,OPLUS_LINEAGE_LIVEDISPLAY_HAL,ENABLE_SE,false)
 
 # Native libraries whitelist
 PRODUCT_COPY_FILES += \
