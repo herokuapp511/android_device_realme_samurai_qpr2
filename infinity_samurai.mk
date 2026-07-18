@@ -31,9 +31,13 @@ PRODUCT_GMS_CLIENTID_BASE := android-oppo
 TARGET_HAS_UDFPS := true
 TARGET_SUPPORTS_QUICK_TAP := true
 TARGET_SUPPORTS_BLUR := true
+
+# GApps defaults; override WITH_GAPPS=false at lunch for vanilla builds.
 WITH_GAPPS := true
+ifeq ($(WITH_GAPPS),true)
 TARGET_BUILD_GOOGLE_TELEPHONY := true
 TARGET_SHIPS_FULL_GAPPS := true
+endif
 
 # Infinity-X
 INFINITY_MAINTAINER := NAYEM_&_TITAN
