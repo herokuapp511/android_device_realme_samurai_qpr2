@@ -4,8 +4,55 @@
 // SPDX-License-Identifier: Apache-2.0
 //
 
-// OPLUS sensor subhal loaded by AOSP android.hardware.sensors@2.1-service.multihal
-// via configs/sensors/hals.conf.
+// Device multihal with ALS correction (WISE_LIGHT → LIGHT + under-display
+// compensation via vendor.lineage.oplus_als). Installed as a unique binary
+// name so we do not collide with AOSP android.hardware.sensors@2.1-service.multihal
+// symbols; overrides the AOSP package so only this service is installed.
+//
+// OPLUS UDFPS subhal (sensors.oplus.samurai) is still loaded via hals.conf.
+
+cc_binary {
+    name: "android.hardware.sensors@2.1-service.samurai",
+    overrides: ["android.hardware.sensors@2.1-service.multihal"],
+    defaults: [
+        "hidl_defaults",
+    ],
+    vendor: true,
+    relative_install_path: "hw",
+    srcs: [
+        "AlsCorrection.cpp",
+        "HalProxy.cpp",
+        "HalProxyCallback.cpp",
+        "service.cpp",
+    ],
+    init_rc: ["android.hardware.sensors@2.1-service.samurai.rc"],
+    vintf_fragments: ["android.hardware.sensors@2.1-samurai.xml"],
+    header_libs: [
+        "android.hardware.sensors@2.X-multihal.header",
+        "android.hardware.sensors@2.X-shared-utils",
+    ],
+    shared_libs: [
+        "android.hardware.sensors@2.0",
+        "android.hardware.sensors@2.0-ScopedWakelock",
+        "android.hardware.sensors@2.1",
+        "libbase",
+        "libbinder",
+        "libbinder_ndk",
+        "libcutils",
+        "libfmq",
+        "libhidlbase",
+        "liblog",
+        "libpower",
+        "libutils",
+        "vendor.lineage.oplus_als-V1-ndk",
+    ],
+    static_libs: [
+        "android.hardware.sensors@1.0-convert",
+    ],
+    cflags: [
+        "-DLOG_TAG=\"sensors-multihal-samurai\"",
+    ],
+}
 
 cc_library_shared {
     name: "sensors.oplus.samurai",

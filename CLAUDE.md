@@ -61,9 +61,9 @@ The LineageOS manifest (`.repo/local_manifests/`) must include entries for these
 ## Key Directories
 
 - **`fingerprint/`** — HIDL 2.3 fingerprint HAL with UDFPS support. Wraps the vendor goodix blob and drives `dimlayer_hbm` via `/sys/kernel/oppo_display` (syshelper AIDL + UDFPS extension for SurfaceFlinger).
-- **`sensors/`** — OPLUS sensor subhal (`sensors.oplus.samurai`) loaded by AOSP multihal via `configs/sensors/hals.conf`.
+- **`sensors/`** — Device sensors multihal (`android.hardware.sensors@2.1-service.samurai`) plus OPLUS UDFPS subhal (`sensors.oplus.samurai` via `configs/sensors/hals.conf`). The multihal remaps QTI Wise Light → `TYPE_LIGHT` and runs **AlsCorrection** (under-display ALS compensation). Do **not** switch back to plain AOSP multihal without restoring ALS correction — auto-brightness will bind nothing useful / stay too bright from display bleed.
 - **`syshelper/`** — OPLUS system helper AIDL service; coordinates UDFPS-related display operations.
-- **`als/`** — LineageOS `vendor.lineage.oplus_als` service; feeds corrected ALS data to framework auto-brightness.
+- **`als/`** — LineageOS `vendor.lineage.oplus_als` (AreaCapture) service; screenshots the panel region above the ALS so `AlsCorrection` can subtract display light from raw lux.
 - **`touch/include/`** — Gesture config for `vendor.lineage.touch-service.oplus` (soong_config INCLUDE_DIR).
 - **`init/`** — `libinit_samurai` shared library loaded by init; detects device variant (Global `RMX1931L1` vs China `RMX1931CN`) and overrides build properties accordingly.
 - **`sepolicy/`** — Device-specific SELinux rules on top of qcom + `hardware/oplus` policy (prefer oplus type labels; keep only samurai-unique paths such as `sysfs_oppo_display`).
@@ -77,6 +77,16 @@ The LineageOS manifest (`.repo/local_manifests/`) must include entries for these
 
 ### HAL Service Pattern
 All HAL implementations follow the same structure: a `service.cpp` that registers the HIDL/AIDL service, a main implementation class inheriting from the generated interface base (e.g., `IFingerprint`), and a `Android.bp` declaring a `cc_binary` with `init_rc` and `vintf_fragments` entries pointing to the service's RC and manifest fragment.
+
+### Auto-brightness / under-display ALS
+Chain (all required for correct dim levels):
+
+1. SSC subhal exposes **QTI Wise Light** (`SENSOR_TYPE_QTI_WISE_LIGHT`, not stock `TYPE_LIGHT`)
+2. Device multihal (`sensors/HalProxy.cpp`) remaps it to `SensorType::LIGHT` so framework auto-brightness binds it
+3. `AlsCorrection::process()` subtracts estimated panel bleed using backlight sysfs + `vendor.lineage.oplus_als` RGB capture
+4. Framework curve: `overlay/FrameworksRes/.../config_autoBrightnessLevels` + `config_autoBrightnessDisplayValuesNits` (nits), mapped through `config_screenBrightnessBacklight` / `config_screenBrightnessNits`
+
+If low brightness stays high after a rebuild: check `logcat -s AlsCorrection sensors-multihal-samurai vendor.lineage.oplus_als` and that sepolicy allows sensors HAL to read `vendor_sysfs_graphics` / `sysfs_leds` and talk to `hal_lineage_oplus_als`.
 
 ### UDFPS Integration
 The fingerprint HAL (`fingerprint/`) calls into `syshelper/` via AIDL to raise/lower a dim layer on the display during fingerprint authentication. The relevant chain is:
