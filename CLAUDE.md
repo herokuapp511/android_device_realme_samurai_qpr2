@@ -4,25 +4,25 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Purpose
 
-This is the **LineageOS device tree** for the **Realme X2 Pro** (codename `samurai`, model RMX1931). It sits between the generic LineageOS platform and the device's hardware, providing:
+This is the **Infinity-X** (LineageOS-based) device tree for the **Realme X2 Pro** (codename `samurai`, model RMX1931). It sits between the ROM platform and the device's hardware, providing:
 
 - Hardware configuration for Qualcomm Snapdragon 855+ (msmnile/sm8150)
 - Device-local HALs for fingerprint (UDFPS) and sensors subhal; shared oplus HALs for touch/vibrator/livedisplay
-- Device-specific overlays, init scripts, and SELinux policies
-- Build system integration for LineageOS
+- Device-specific overlays, init scripts, power profiles, and SELinux policies
+- Build system integration for Infinity-X (`infinity_samurai`)
 
 ## Build Commands
 
-This repo is part of a larger AOSP/LineageOS tree. All build commands are run from the root of that tree, not from this directory.
+This repo is part of a larger AOSP/Infinity-X tree. All build commands are run from the root of that tree, not from this directory.
 
 ```bash
-# Set up the build environment
+# Set up the build environment (also runs vendorsetup.sh clone helpers)
 source build/envsetup.sh
 
-# Initialize device configuration
-breakfast samurai
-# or equivalently:
-lunch lineage_samurai-user
+# Lunch targets (COMMON_LUNCH_CHOICES)
+lunch infinity_samurai-user
+# or: infinity_samurai-userdebug / infinity_samurai-eng
+# Legacy roomservice may still use: breakfast samurai
 
 # Full build
 mka bacon
@@ -33,6 +33,9 @@ mka android.hardware.biometrics.fingerprint@2.3-service.samurai
 # Build the kernel
 mka dtboimage bootimage
 
+# Vanilla (no GApps): override at lunch
+WITH_GAPPS=false lunch infinity_samurai-userdebug
+
 # Extract proprietary blobs from a connected device (run from this directory)
 ./extract-files.sh
 
@@ -42,6 +45,13 @@ mka dtboimage bootimage
 
 There are no unit tests in this repository. Validation is done by flashing and booting.
 
+### GApps flags
+
+`infinity_samurai.mk` defaults `WITH_GAPPS := true`. Telephony/full-GApps targets
+(`TARGET_BUILD_GOOGLE_TELEPHONY`, `TARGET_SHIPS_FULL_GAPPS`) are set only when
+`WITH_GAPPS` is true. `INFINITY_MAINTAINER` uses the make/property-safe form
+`NAYEM_&_TITAN` (underscores, not spaces).
+
 ## Repo Dependencies
 
 This device tree depends on several other repos that must be present in the Android tree:
@@ -50,13 +60,17 @@ This device tree depends on several other repos that must be present in the Andr
 |---|---|
 | `kernel/realme/sm8150` | Device kernel source (`TARGET_KERNEL_SOURCE`) |
 | `vendor/realme/samurai` | Proprietary blobs extracted via `extract-files.sh` |
+| `hardware/oplus` | Shared oplus HALs (touch, vibrator, livedisplay, UDFPS extension, sepolicy) — LineageOS `lineage-23.2` |
+| `vendor/lunaris/dolby` | Dolby Atmos packaging (`dolby.mk` / BoardConfigDolby) |
 | `hardware/qcom-caf/common` | Common QCOM CAF hardware definitions |
 | `device/qcom/sepolicy_vndr` | QCOM vendor SELinux policy base |
 | `device/lineage/sepolicy` | LineageOS SELinux policy extensions |
 | `packages/apps/RealmeParts` | Device-specific settings app |
-| `vendor/lineage` | LineageOS common build config |
+| `vendor/infinity` / `vendor/lineage` | ROM common build config |
 
-The LineageOS manifest (`.repo/local_manifests/`) must include entries for these repos; they are not automatically fetched.
+`lineage.dependencies` lists `hardware/oplus` and `vendor/lunaris/dolby`.
+`vendorsetup.sh` auto-clones those two when missing (roomservice / envsetup helper).
+Prefer the manifest or `vendorsetup.sh` over hand-cloning so paths stay consistent.
 
 ## Key Directories
 
@@ -70,8 +84,14 @@ The LineageOS manifest (`.repo/local_manifests/`) must include entries for these
 - **`shims/`** — Tiny libbase/libcrypto shims for legacy ODM blobs (dspservice, ATFWD-daemon).
 - **`overlay*/`** — RRO (Runtime Resource Overlay) packages that patch framework resources at runtime (SystemUI, Settings, Telephony, WiFi, etc.). `overlay-lineage/` is for LineageOS-specific overrides.
 - **`rootdir/`** — Files copied verbatim to the root filesystem: `bin/` (init shell scripts), `etc/` (init RC files, `fstab.qcom`).
+  - `init.oppo.rc` — OTG / oppo_display / touchpanel permissions (gesture nodes for oplus touch HAL, including `double_tap_enable_indep`).
+  - `init.qcom.power.rc` — `perf_profile` CPU/GPU caps (gold+ max 2956800; Adreno `max_pwrlevel` / `min_pwrlevel`).
+  - `init.target.power.rc` / `init.target.rc` — suspend-to-RAM (`mem_sleep=deep`), `console_suspend=Y`, clear `lpm_levels.sleep_disabled` on `boot_completed` (cmdline boots with `sleep_disabled=1`).
 - **`audio/`** — ALSA mixer paths, audio platform info, sound trigger config, and ACDB calibration data for the WCD9340 codec.
-- **`configs/`** — GPS, media codec/profile XML, power hint JSON, QMI config.
+- **`configs/`** — GPS, media codec/profile XML, **powerhint.json** (PowerHAL nodes/hints), QMI config.
+- **`vendorsetup.sh`** — Clones missing `hardware/oplus` and `vendor/lunaris/dolby` at envsetup time.
+- **`infinity_samurai.mk`** / **`AndroidProducts.mk`** — Product entry point and lunch choices.
+- **`manifest.xml`** — Device VINTF fragment (e.g. `tetheroffload.control` must be **1.1** to match IPACM).
 
 ## Architecture Patterns
 
@@ -84,18 +104,35 @@ The fingerprint HAL (`fingerprint/`) calls into `syshelper/` via AIDL to raise/l
 2. It calls `UdfpsHelper` (in `syshelper/`) to toggle `dimlayer_hbm` via the display driver sysfs node
 3. `getUdfpsDimZOrder()` controls the z-order of the dim layer
 
+### Vibrator / DRM
+- Vibrator HAL: `vendor.qti.hardware.vibrator.service.oplus` (hardware/oplus QTI path; aw8697 via `/sys/class/leds/vibrator`).
+- Copy CAF `excluded-input-devices.xml` so touchscreen input does not double-trigger haptics.
+- Ship `wvmkiller` with DRM/clearkey packages.
+
+### Power / performance
+- **PowerHAL** reads `configs/powerhint.json`. Gold+ (`cpu7`) default max is **2956800** (SM8150/855+ table top — not 2841600). GPU min/max are driven via **`max_pwrlevel` / `min_pwrlevel`** (not raw `devfreq` Hz alone); `ResetOnInit` must not re-cap clocks below hardware max.
+- **Init profiles** in `init.qcom.power.rc` must stay aligned with powerhint (cpu7 max + GPU pwrlevels for balanced/gaming/power-save).
+- **Idle**: prefer `deep` suspend over `s2idle`; re-enable LPM after boot. Do not leave `console_suspend=N` permanently — it blocks deeper idle (use only while debugging kernel crashes).
+
 ### Device Variant Detection
 `init/init_samurai.cpp` runs at early boot and reads the `ro.boot.id.operators` property to distinguish variants, then calls `property_override()` to set the correct `ro.product.*` and `ro.build.*` values. This pattern is also used for RAM-tier-specific dalvik heap configurations.
 
 ### Property Files
-- `system.prop` — ART, audio, BT, camera, RIL/IMS properties for the system partition
+- `system.prop` — ART, audio, BT, camera, RIL/IMS, sensors properties for the system partition
 - `vendor.prop` — Qualcomm-specific tuning (audio, display, DPM, GPS, perf) for the vendor partition
 - `odm.prop` / `product.prop` / `system_ext.prop` — Partition-specific overrides
 
 Properties are loaded by the partition they reside on; do not put vendor-domain properties in `system.prop`.
 
+#### Property gotchas (samurai-specific)
+- **`ro.qti.sensors.wu` must be `true`** — `false` blocks tilt/pickup wake while the screen is off (breaks lift-to-wake and RealmeParts / OplusDoze).
+- **Do not set `ro.oplus.system.camera.flashlight=com.oppo.motor.flashlight`** — that package is for pop-up motor cameras (e.g. Realme X2). X2 Pro has a fixed front camera; the prop breaks QS torch / CameraManager torch path.
+
 ### Overlays vs Properties
 Use **RRO overlays** (`overlay*/`) to override framework resource values (strings, integers, booleans in `res/values/`). Use **property files** for runtime tunables consumed by native daemons and the HAL layer. Do not duplicate the same setting in both.
+
+### VINTF
+Keep device `manifest.xml` HAL versions aligned with the actual service registration (e.g. IPACM registers `tetheroffload.control` **1.1**; declaring 1.0 fails under `kEnforceVintfManifest`).
 
 ## Conventions
 
@@ -105,3 +142,5 @@ Use **RRO overlays** (`overlay*/`) to override framework resource values (string
 - **SELinux**: Every new executable or service needs a corresponding type in `sepolicy/`, a file context in `file_contexts`, and a service context if it registers with hwservicemanager/servicemanager.
 - **HIDL vs AIDL**: Existing HALs use HIDL (fingerprint 2.3, sensors 2.1). New services (syshelper) use AIDL with the NDK backend. Don't mix HIDL and AIDL in the same service.
 - **Proprietary blobs**: Listed in `proprietary-files.txt` with SHA-1 checksums. After adding or updating a blob, run `./update-sha1sums.py` and commit the updated checksums alongside the change.
+- **Init permissions**: Use valid octal modes (`0666`/`0660`, never `06666`). `chown` takes user/group; `chmod` takes mode — do not swap them (see historical `fp_state` bug).
+- **Touch HAL nodes**: When adding `/proc/touchpanel/*` gesture paths, chown to `system` and chmod `0660` so `vendor.lineage.touch-service.oplus` can access them.
