@@ -126,7 +126,10 @@ Do **not** duplicate under `overlay-lineage/.../SystemUI/`.
 ### Power / performance
 - **PowerHAL** reads `configs/powerhint.json`. Gold+ (`cpu7`) default max is **2956800** (SM8150/855+ table top — not 2841600). GPU min/max are driven via **`max_pwrlevel` / `min_pwrlevel`** (not raw `devfreq` Hz alone); `ResetOnInit` must not re-cap clocks below hardware max.
 - **Init profiles** in `init.qcom.power.rc` must stay aligned with powerhint (cpu7 max + GPU pwrlevels for balanced/gaming/power-save).
-- **Idle**: prefer `deep` suspend over `s2idle`; re-enable LPM after boot. Do not leave `console_suspend=N` permanently — it blocks deeper idle (use only while debugging kernel crashes).
+- **Idle / deep sleep (device tree, not a kernel gap)**:
+  - Cmdline: `lpm_levels.sleep_disabled=1` for boot, `mem_sleep_default=deep`.
+  - On `sys.boot_completed=1`: clear `sleep_disabled`, set `mem_sleep=deep`, `console_suspend=Y`, UFS clkgate/hibern8 — via **both** `init.qcom.power.rc` `enable-low-power` and `init.target*.rc` (do not leave `enable-low-power` as UFS-only).
+  - Kernel already has `CONFIG_MSM_PM` + PSCI suspend; if idle is still broken after this, check userspace wakelocks (`dumpsys power`) before changing the kernel.
 
 ### Device Variant Detection
 `init/init_samurai.cpp` runs at early boot and reads the `ro.boot.id.operators` property to distinguish variants, then calls `property_override()` to set the correct `ro.product.*` and `ro.build.*` values. This pattern is also used for RAM-tier-specific dalvik heap configurations.
