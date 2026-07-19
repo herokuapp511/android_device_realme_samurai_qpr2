@@ -11,6 +11,13 @@ libnpu.so
 libhta_hexagon_runtime.so
 unnhal-acc-hta.so
 libAlgoProcess.so
+libAlgoInterface.so
+libapsjpeg.so
+libapsexif.so
+libbsproxy.so
+libFaceBeautyCap.so
+libFaceBeautyPre.so
+libPolarrRender.so
 libancbase_rt_bokeh.so
 libAncHumBokeh.so
 libsnpe_loader.so
