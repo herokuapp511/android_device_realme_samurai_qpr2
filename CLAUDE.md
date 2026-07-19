@@ -60,6 +60,7 @@ This device tree depends on several other repos that must be present in the Andr
 |---|---|
 | `kernel/realme/sm8150` | Device kernel source (`TARGET_KERNEL_SOURCE`) |
 | `vendor/realme/samurai` | Proprietary blobs extracted via `extract-files.sh` |
+| `vendor/oplus/camera` | Stock RUI F.14 OppoCamera + APS/beauty assets (`camera.mk`, `TARGET_USES_OPLUS_CAMERA`) |
 | `hardware/oplus` | Shared oplus HALs (touch, vibrator, livedisplay, UDFPS extension, sepolicy) — LineageOS `lineage-23.2` |
 | `vendor/lunaris/dolby` | Dolby Atmos packaging (`dolby.mk` / BoardConfigDolby) |
 | `hardware/qcom-caf/common` | Common QCOM CAF hardware definitions |

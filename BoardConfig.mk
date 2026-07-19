@@ -154,6 +154,10 @@ include hardware/oplus/sepolicy/qti/SEPolicy.mk
 SYSTEM_EXT_PRIVATE_SEPOLICY_DIRS += $(DEVICE_PATH)/sepolicy/private
 SYSTEM_EXT_PUBLIC_SEPOLICY_DIRS += $(DEVICE_PATH)/sepolicy/public
 BOARD_VENDOR_SEPOLICY_DIRS += $(DEVICE_PATH)/sepolicy/vendor
+# Stock OPlus camera sepolicy (optional; tree must be at vendor/oplus/camera)
+ifneq ($(wildcard vendor/oplus/camera/sepolicy),)
+BOARD_VENDOR_SEPOLICY_DIRS += vendor/oplus/camera/sepolicy
+endif
 
 # Power
 TARGET_USES_INTERACTION_BOOST := true

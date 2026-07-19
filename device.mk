@@ -28,6 +28,10 @@ $(call inherit-product, frameworks/native/build/phone-xhdpi-6144-dalvik-heap.mk)
 # Get non-open-source specific aspects
 $(call inherit-product, vendor/realme/samurai/samurai-vendor.mk)
 
+# Stock RUI F.14 OPlus/Oppo Camera port (com.oppo.camera + APS assets)
+# Tree path: vendor/oplus/camera  (see vendor_oplus_camera in workspace)
+$(call inherit-product-if-exists, vendor/oplus/camera/camera.mk)
+
 # Dolby Atmos (LunarisAOSP)
 $(call inherit-product, vendor/lunaris/dolby/dolby.mk)
 
@@ -175,7 +179,7 @@ PRODUCT_PACKAGES += \
     vendor.qti.hardware.btconfigstore@2.0 \
     vendor.qti.hardware.btconfigstore@2.0.vendor
 
-# Camera
+# Camera (QTI HAL — base stack; stock OppoCamera is in vendor/oplus/camera)
 PRODUCT_PACKAGES += \
     android.frameworks.displayservice@1.0 \
     android.hardware.camera.provider@2.4-impl:64 \

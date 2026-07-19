@@ -41,7 +41,9 @@ ro.camera.temperature.limit=470
 ro.oplus.camera.video_beauty.prefix=oppo.video.beauty.
 ro.oplus.camera.video.beauty.switch=oppo.switch.video.beauty
 persist.vendor.camera.light_ae.enable=1
-ro.oplus.system.camera.name=com.oplus.camera
+# Stock RUI F.14 package is com.oppo.camera (not com.oplus.camera)
+ro.oplus.system.camera.name=com.oppo.camera
+ro.com.google.lens.oem_camera_package=com.oppo.camera
 
 # Charger
 ro.charger.enable_suspend=true

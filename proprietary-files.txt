@@ -311,6 +311,24 @@ vendor/lib64/camera/com.qti.tuned.qtech_s5kgw1.bin
 vendor/lib64/camera/com.qti.tuned.sunny_s5kgw1.bin
 vendor/lib64/libSEC.HybridHDR.so
 
+# Camera — APS / beauty / filter deps (F.14; also shipped via vendor/oplus/camera)
+odm/lib64/libFaceBeautyCap.so
+odm/lib64/libFaceBeautyPre.so
+odm/lib64/libbsproxy.so
+odm/lib64/libPolarrRender.so
+odm/lib64/libWaterMode.so
+odm/lib64/libTrafficMode.so
+odm/lib64/libwatermark_photo.so
+
+# Camera — F.14 models / LUTs / night (prefer vendor/oplus/camera PRODUCT_COPY_FILES)
+# odm/etc/camera/darksight/*
+# odm/etc/camera/fb_model/*
+# odm/etc/camera/filters_lut/*
+# odm/etc/camera/filters_res/*
+# odm/etc/camera/megvii/*
+# odm/etc/camera/singleblur/*
+# odm/etc/camera/tonemap/*
+
 # Camera / DSP - Arcsoft libraries
 odm/lib/rfsa/adsp/libarcsoft_dualcam_refocus_skel.so
 odm/lib/rfsa/adsp/libarcsoft_hdrplus_hvx_5221_skel.so
