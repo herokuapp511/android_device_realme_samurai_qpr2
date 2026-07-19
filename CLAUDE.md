@@ -104,6 +104,20 @@ The fingerprint HAL (`fingerprint/`) calls into `syshelper/` via AIDL to raise/l
 2. It calls `UdfpsHelper` (in `syshelper/`) to toggle `dimlayer_hbm` via the display driver sysfs node
 3. `getUdfpsDimZOrder()` controls the z-order of the dim layer
 
+**Null-safety:** `BiometricsFingerprint` must tolerate a missing oplus FP or syshelper service (return `SYS_EINVAL` / no-op callbacks). `isEnrolling` is initialized `false`.
+
+**Icon asset:** White fingerprint glyph in static SystemUI RRO only:
+`overlay/SystemUIRes/res/drawable-nodpi/udfps_icon_pressed.webp`  
+Do **not** duplicate under `overlay-lineage/.../SystemUI/`.
+
+### Product ownership (do not dual-stack)
+
+| Feature | Owner | Notes |
+|---------|--------|--------|
+| Ambient / pickup | **OplusDoze** + `OplusDozeResCommon` | RealmeParts doze activity/service disabled |
+| Charge limit | **Lineage Health** on `mmi_charging_enable` | RealmeParts SmartCharging disabled |
+| Display extras | RealmeParts (DC/HBM/sRGB/OTG/game) | Sysfs under `/sys/kernel/oppo_display` (0660 system) |
+
 ### Vibrator / DRM
 - Vibrator HAL: `vendor.qti.hardware.vibrator.service.oplus` (hardware/oplus QTI path; aw8697 via `/sys/class/leds/vibrator`).
 - Copy CAF `excluded-input-devices.xml` so touchscreen input does not double-trigger haptics.
@@ -118,9 +132,10 @@ The fingerprint HAL (`fingerprint/`) calls into `syshelper/` via AIDL to raise/l
 `init/init_samurai.cpp` runs at early boot and reads the `ro.boot.id.operators` property to distinguish variants, then calls `property_override()` to set the correct `ro.product.*` and `ro.build.*` values. This pattern is also used for RAM-tier-specific dalvik heap configurations.
 
 ### Property Files
-- `system.prop` — ART, audio, BT, camera, RIL/IMS, sensors properties for the system partition
-- `vendor.prop` — Qualcomm-specific tuning (audio, display, DPM, GPS, perf) for the vendor partition
-- `odm.prop` / `product.prop` / `system_ext.prop` — Partition-specific overrides
+- `system.prop` — ART, audio, BT, camera, non-vendor RIL/IMS, sensors (system partition)
+- `vendor.prop` — Qualcomm vendor-domain tuning (audio, display, DPM, GPS, perf, **persist.vendor.radio.***)
+- `product.prop` — Bluetooth profile enablement (single owner for `bluetooth.profile.*`)
+- `odm.prop` / `system_ext.prop` — Partition-specific overrides
 
 Properties are loaded by the partition they reside on; do not put vendor-domain properties in `system.prop`.
 
