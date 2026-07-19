@@ -11,11 +11,10 @@ genfscon sysfs /kernel/oppo_display u:object_r:sysfs_oppo_display:s0
 genfscon proc /sys/kernel/sched_upmigrate u:object_r:proc_sched:s0
 genfscon proc /sys/kernel/sched_downmigrate u:object_r:proc_sched:s0
 
-# Power supply — genfscon is what actually labels sysfs at boot.
-# file_contexts alone does not label these nodes; without this, health HAL
-# cannot read charge_full_design / capacity and Settings shows ~1 mAh / 0%.
-genfscon sysfs /devices/platform/soc/c440000.qcom,spmi/spmi-0/spmi0-02/c440000.qcom,spmi:qcom,pm8150b@2:qcom,qpnp-smb5/power_supply/battery u:object_r:vendor_sysfs_battery_supply:s0
-genfscon sysfs /devices/platform/soc/c440000.qcom,spmi/spmi-0/spmi0-02/c440000.qcom,spmi:qcom,pm8150b@2:qcom,qpnp-smb5/power_supply/ac u:object_r:vendor_sysfs_battery_supply:s0
+# Power supply genfscon for battery/ac is already provided by:
+# - qcom msmnile: .../power_supply/battery → vendor_sysfs_battery_supply
+# - hardware/oplus: .../power_supply/ac → vendor_sysfs_battery_supply
+# Re-declaring them here fails checkpolicy with "duplicate entry for genfs entry".
 
 # Wakeup (only nodes not already labelled by the qcom base sepolicy)
 genfscon sysfs /devices/platform/soc/c8c000.qcom,qup_uart/tty/ttyHS0/power/wakeup u:object_r:sysfs_wakeup:s0
