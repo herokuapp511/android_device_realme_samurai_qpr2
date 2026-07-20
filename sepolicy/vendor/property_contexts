@@ -16,13 +16,13 @@ persist.vendor.service.bt.iot.enablelogging u:object_r:vendor_bluetooth_prop:s0
 vendor.bluetooth.soc                u:object_r:vendor_bluetooth_prop:s0
 
 # Camera
-oppo.switch.video.beauty            u:object_r:vendor_camera_prop:s0
+# NOTE: oppo.switch.video.beauty / persist.ipe.debug / persist.sys.oppo.region
+# are labeled as exported_system_prop by vendor/oplus/camera (system/product
+# props for com.oplus.camera). Do not re-label them as vendor_camera_prop.
 persist.bps.debug                   u:object_r:vendor_camera_prop:s0
 persist.front.skipdisplay.enable    u:object_r:vendor_camera_prop:s0
-persist.ipe.debug                   u:object_r:vendor_camera_prop:s0
 persist.oppo.camera.                u:object_r:vendor_camera_prop:s0
 persist.oppo.front.mfnr             u:object_r:vendor_camera_prop:s0
-persist.sys.oppo.region             u:object_r:vendor_camera_prop:s0
 persist.watermark.dumpimg           u:object_r:vendor_camera_prop:s0
 ro.oppo.version                     u:object_r:vendor_camera_prop:s0
 
