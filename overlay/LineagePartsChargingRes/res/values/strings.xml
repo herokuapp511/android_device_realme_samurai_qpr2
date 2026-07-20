@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="samurai_charging_speed_title">Speed limit</string>
+    <string name="samurai_charging_speed_summary">Peak charge current (cool_down). Default allows full VOOC/SuperVOOC.</string>
+</resources>
