@@ -8,4 +8,8 @@
 runtime_resource_overlay {
     name: "LineagePartsChargingRes",
     system_ext_specific: true,
+
+    // Allow aapt2 to resolve @*org.lineageos.lineageparts:string/array refs
+    // in the overlaid charging_control_settings.xml PreferenceScreen.
+    resource_libs: ["LineageParts"],
 }
