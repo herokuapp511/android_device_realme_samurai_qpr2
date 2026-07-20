@@ -1,0 +1,25 @@
+# GameBar sysfs permissions for samurai (SM8150)
+# Complements packages/apps/GameBar/init/init.gamebar.rc with device paths.
+
+on property:vendor.post_boot.parsed=1
+    # GPU (Adreno / kgsl)
+    chown system system /sys/class/kgsl/kgsl-3d0/gpu_busy_percentage
+    chmod 0664 /sys/class/kgsl/kgsl-3d0/gpu_busy_percentage
+    chown system system /sys/class/kgsl/kgsl-3d0/gpuclk
+    chmod 0664 /sys/class/kgsl/kgsl-3d0/gpuclk
+    chown system system /sys/class/kgsl/kgsl-3d0/temp
+    chmod 0664 /sys/class/kgsl/kgsl-3d0/temp
+
+    # DDR bandwidth proxy (freq-like metric for overlay)
+    chown system system /sys/class/devfreq/soc:qcom,cpu-llcc-ddr-bw/cur_freq
+    chmod 0664 /sys/class/devfreq/soc:qcom,cpu-llcc-ddr-bw/cur_freq
+
+on property:sys.boot_completed=1
+    chown system system /sys/class/kgsl/kgsl-3d0/gpu_busy_percentage
+    chmod 0664 /sys/class/kgsl/kgsl-3d0/gpu_busy_percentage
+    chown system system /sys/class/kgsl/kgsl-3d0/gpuclk
+    chmod 0664 /sys/class/kgsl/kgsl-3d0/gpuclk
+    chown system system /sys/class/kgsl/kgsl-3d0/temp
+    chmod 0664 /sys/class/kgsl/kgsl-3d0/temp
+    chown system system /sys/class/devfreq/soc:qcom,cpu-llcc-ddr-bw/cur_freq
+    chmod 0664 /sys/class/devfreq/soc:qcom,cpu-llcc-ddr-bw/cur_freq

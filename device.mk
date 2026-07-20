@@ -304,6 +304,7 @@ $(call soong_config_set,libinit,vendor_init_lib,libinit_samurai)
 PRODUCT_PACKAGES += \
     fstab.qcom \
     init.class_main.sh \
+    init.gamebar.samurai.rc \
     init.oppo.rc \
     init.qcom.early_boot.sh \
     init.qcom.rc \
@@ -409,6 +410,11 @@ PRODUCT_PACKAGES += \
 
 # Parts
 $(call inherit-product, packages/apps/RealmeParts/parts.mk)
+
+# GameBar — real-time FPS/CPU/GPU overlay (privileged system_ext)
+$(call inherit-product, packages/apps/GameBar/gamebar.mk)
+PRODUCT_PACKAGES += \
+    GameBarRes
 
 # Power
 PRODUCT_PACKAGES += \
