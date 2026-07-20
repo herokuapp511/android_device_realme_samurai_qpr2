@@ -1,0 +1,11 @@
+//
+// SPDX-FileCopyrightText: 2026
+// SPDX-License-Identifier: Apache-2.0
+//
+// Injects "Speed limit" into LineageParts Charging control preference screen.
+//
+
+runtime_resource_overlay {
+    name: "LineagePartsChargingRes",
+    system_ext_specific: true,
+}
