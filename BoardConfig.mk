@@ -158,6 +158,8 @@ VENDOR_SECURITY_PATCH := 2021-11-05
 include device/qcom/sepolicy_vndr/SEPolicy.mk
 # hardware/oplus SEPolicy.mk already pulls in device/lineage/sepolicy/libperfmgr
 include hardware/oplus/sepolicy/qti/SEPolicy.mk
+# OPlus Camera hybrid (vendor/oplus/camera) — optional if tree not synced yet
+-include vendor/oplus/camera/sepolicy/SEPolicy.mk
 SYSTEM_EXT_PRIVATE_SEPOLICY_DIRS += $(DEVICE_PATH)/sepolicy/private
 SYSTEM_EXT_PUBLIC_SEPOLICY_DIRS += $(DEVICE_PATH)/sepolicy/public
 BOARD_VENDOR_SEPOLICY_DIRS += $(DEVICE_PATH)/sepolicy/vendor

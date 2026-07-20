@@ -124,6 +124,7 @@ odm/etc/camera/asd/detect.dlc|e1c0b0bb2d7ee9bd3c69cb0463456d578961775b
 odm/etc/camera/ashdr/ncf_pack.ncf|1d64ee5e6ffc6d9a568432be6a9c74fd0fbf07a3
 odm/etc/camera/config/imx319|06bc9fcfe05e6a43eac2a7d348633cc171306c01
 odm/etc/camera/config/imx471|47b04528c0b4aefb2fef21aa00c2325e1a6c9f83
+odm/etc/camera/config/ov02a1b
 odm/etc/camera/config/s5k3m5sx|51fd2fdb36bbfe4a55b9f7dcb0f9d681ef9f7dd1
 odm/etc/camera/config/video_beauty_default_config|8bb992ce2202113d5b12871b4c1b4d2b8ab7d4a7
 odm/etc/camera/model/DocDetectV15.xbin|ff40cbe1cc82fe484764029c4a42386f32c8fe51
@@ -178,15 +179,15 @@ odm/lib64/libXDocProcessSDK.so|50493f235153f606739c09142da7c0e2436e67c3
 odm/lib64/lib_rectify.so|9c60faed5b65a6d4bac9f2e5a64417bada37afed
 odm/lib64/libancbase_rt_bokeh.so|701429feff5b02bd2353ee4240fa1c652ce811df
 -odm/lib64/libancbase_rt_retain.so|b2e9f9205ab77f4d741cdd32523a66711f8ab049
--odm/lib64/libaps_frame_registration.so|ae277a0d501e3d5f725fb971714d360b0f2477ab
--odm/lib64/libapsdarksight.so|b6e68a7c29766f6282cc44c76d3120ee0335c2f9
+# optional missing from F.14 dump: odm/lib64/libaps_frame_registration.so|ae277a0d501e3d5f725fb971714d360b0f2477ab
+# optional missing from F.14 dump: odm/lib64/libapsdarksight.so|b6e68a7c29766f6282cc44c76d3120ee0335c2f9
 odm/lib64/libapsexif.so|cc8a750208dcb21a5a7fb2b258c01318fed9c557
 odm/lib64/libapsjpeg.so|74f806e6945a8f0af8abe7c96cea7da0098bafbc
 odm/lib64/libc++_shared.so|d5ba162c9b3165804df81d3260b7dcf32a1a46be
 odm/lib64/libmpbase.so|0bded0d4b202799bb5584c4a0415050a64c5abab
 odm/lib64/libhwconfigurationutil.so|098530651cd221f2bf6f819e84194a3523681131
 odm/lib64/libstblur_api.so|d1f206c699f409349b35adfb8164027b47808789
--odm/lib64/libstblur_capture_api.so|ea70251fe96252d9c7012a698d0135c0e1be364d
+odm/lib64/libstblur_capture_api.so|ea70251fe96252d9c7012a698d0135c0e1be364d
 odm/lib64/libstface_fd_api.so|b0c197965aa644f3de398ac1cdb9e1de10cfcd97
 odm/lib64/libsymphony-cpu.so|521e63af19b3fd51b12bb48f95b3f58a90068cc2
 odm/lib64/libsymphonypower.so|55d98fe86f9967163bbfb297cdf3a1784dc94a58
@@ -1426,3 +1427,38 @@ vendor/lib64/vendor.qti.hardware.wifi.keystore@1.0.so
 vendor/lib64/vendor.qti.hardware.wifi.wifilearner@1.0.so
 vendor/lib64/vendor.qti.hardware.wigig.netperftuner@1.0.so
 vendor/lib64/vendor.qti.hardware.wigig.supptunnel@1.0.so
+
+# HYBRID F.14 OPlus Camera — models + algo libs required by stock-like OPlus Camera
+# Full tree lives under vendor/realme/samurai/proprietary/odm/etc/camera (175 files).
+# Base sensor configs are listed above; this block covers the rest + missing ODM libs.
+# Packaging of the bulk tree is via vendor/realme/samurai/camera-f14-hybrid.mk
+# (megvii optional: TARGET_ODM_CAMERA_MEGVII=true).
+
+# DarkSight / Night
+odm/etc/camera/darksight/darksight_main.bin
+odm/etc/camera/darksight/darksight_ultrawide.bin
+
+# FaceBeauty models (directory)
+odm/etc/camera/fb_model/000.png
+odm/etc/camera/fb_model/000_pre.bin
+odm/etc/camera/fb_model/skinmask.bin
+odm/etc/camera/fb_model/skinmask.png
+
+# Filters / tonemap / singleblur
+odm/etc/camera/filters_lut/default
+odm/etc/camera/filters_res/film_grain_small.bin
+odm/etc/camera/tonemap/list.txt
+odm/etc/camera/tonemap/s_curve_lut
+odm/etc/camera/singleblur/license_release.license
+
+# Critical ODM algo libs (libAlgoProcess NEEDED chain + beauty/filters)
+odm/lib64/libapsjpeg.so
+odm/lib64/libapsexif.so
+odm/lib64/libbsproxy.so
+odm/lib64/libstblur_api.so
+odm/lib64/libFaceBeautyCap.so
+odm/lib64/libFaceBeautyPre.so
+odm/lib64/libPolarrRender.so
+odm/lib64/libPerfectlyClearCrux.so
+odm/lib64/libPerfectlyClearCruxOpt.so
+odm/lib64/libRedeyeReduce.so

@@ -31,6 +31,19 @@ $(call inherit-product, vendor/realme/samurai/samurai-vendor.mk)
 # Dolby Atmos (LunarisAOSP)
 $(call inherit-product, vendor/lunaris/dolby/dolby.mk)
 
+# ---------------------------------------------------------------------------
+# OPlus Camera hybrid (Android 16.2)
+#   APK / product JNI / sepolicy / props  → vendor/oplus/camera (12R A16 base)
+#   Sensor configs + models + ODM algo    → vendor/realme/samurai (F.14)
+# Toggle: TARGET_USES_OPLUS_CAMERA=false to ship stock AOSP Camera2/Aperture only.
+# ---------------------------------------------------------------------------
+TARGET_USES_OPLUS_CAMERA ?= true
+ifeq ($(TARGET_USES_OPLUS_CAMERA),true)
+$(call inherit-product-if-exists, vendor/oplus/camera/camera-vendor.mk)
+# F.14 darksight/fb_model/filters/tonemap + missing ODM algo libs (ODM-size aware)
+$(call inherit-product-if-exists, vendor/realme/samurai/camera-f14-hybrid.mk)
+endif
+
 # Boot animation
 TARGET_SCREEN_HEIGHT := 2400
 TARGET_SCREEN_WIDTH := 1080

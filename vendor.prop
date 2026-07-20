@@ -53,7 +53,12 @@ ro.bluetooth.a2dp_offload.supported=true
 # Camera
 camera.disable_zsl_mode=1
 vendor.camera.algo.jpeghwencode=0
+# com.oplus.camera is the hybrid OPlus Camera package (A16 12R base). Keep in
+# aux packagelist so multi-camera / logical cameras are visible to the app.
+# Full list is also set from vendor/oplus/camera/camera-vendor.mk product props.
+vendor.camera.aux.packagelist=com.oplus.camera,org.codeaurora.snapcam,org.lineageos.aperture
 vendor.camera.aux.packageexcludelist=org.telegram.messenger,org.thunderdog.challegram,us.zoom.videomeetings
+persist.vendor.camera.privapp.list=com.oplus.camera,org.lineageos.aperture,org.codeaurora.snapcam
 
 # CNE
 persist.vendor.cne.feature=1

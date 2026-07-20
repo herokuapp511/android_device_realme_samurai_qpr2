@@ -7,5 +7,11 @@
   {
     "repository": "vendor_lunaris_dolby",
     "target_path": "vendor/lunaris/dolby"
+  },
+  {
+    "repository": "vendor_oplus_camera",
+    "target_path": "vendor/oplus/camera",
+    "remote": "gitlab",
+    "branch": "main"
   }
 ]

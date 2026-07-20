@@ -19,6 +19,11 @@ DOLBY_DIR="${SRC_DIR}/vendor/lunaris/dolby"
 DOLBY_REPO="https://github.com/tranQuila-Project/vendor_lunaris_dolby"
 DOLBY_BRANCH="main"
 
+# A16-ready OPlus Camera stack (OnePlus 12R base) — hybrid with F.14 sensor assets
+OPLUS_CAM_DIR="${SRC_DIR}/vendor/oplus/camera"
+OPLUS_CAM_REPO="https://gitlab.com/pure-soul-kk/vendor_oplus_camera.git"
+OPLUS_CAM_BRANCH="main"
+
 clone_if_missing() {
     local dir="$1"
     local repo="$2"
@@ -43,3 +48,4 @@ clone_if_missing() {
 echo -e "${B}samurai: checking device dependencies...${N}"
 clone_if_missing "${OPLUS_DIR}" "${OPLUS_REPO}" "${OPLUS_BRANCH}" "hardware/oplus"
 clone_if_missing "${DOLBY_DIR}" "${DOLBY_REPO}" "${DOLBY_BRANCH}" "LunarisAOSP Dolby Atmos"
+clone_if_missing "${OPLUS_CAM_DIR}" "${OPLUS_CAM_REPO}" "${OPLUS_CAM_BRANCH}" "vendor/oplus/camera"

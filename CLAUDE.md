@@ -67,10 +67,20 @@ This device tree depends on several other repos that must be present in the Andr
 | `device/lineage/sepolicy` | LineageOS SELinux policy extensions |
 | `packages/apps/RealmeParts` | Device-specific settings app |
 | `vendor/infinity` / `vendor/lineage` | ROM common build config |
+| `vendor/oplus/camera` | A16 OPlus Camera app stack (12R base); hybrid with F.14 sensor assets in `vendor/realme/samurai` |
 
-`lineage.dependencies` lists `hardware/oplus` and `vendor/lunaris/dolby`.
-`vendorsetup.sh` auto-clones those two when missing (roomservice / envsetup helper).
+`lineage.dependencies` lists `hardware/oplus`, `vendor/lunaris/dolby`, and `vendor/oplus/camera`.
+`vendorsetup.sh` auto-clones those when missing (roomservice / envsetup helper).
 Prefer the manifest or `vendorsetup.sh` over hand-cloning so paths stay consistent.
+
+### OPlus Camera hybrid (Android 16.2)
+
+- **Toggle:** `TARGET_USES_OPLUS_CAMERA` (default `true`) in `device.mk`.
+- **App/props/sepolicy:** `vendor/oplus/camera` → package `com.oplus.camera`.
+- **F.14 sensor configs + models + ODM algo libs:** `vendor/realme/samurai` (`camera-f14-hybrid.mk` + full `odm/etc/camera`).
+- **Never** overwrite F.14 sensor configs with OnePlus ones.
+- **ODM is 256MB** — megvii models optional via `TARGET_ODM_CAMERA_MEGVII := true`.
+- Docs: `vendor/oplus/camera/docs/BRINGUP.md`, `DIFFERENCES.md`, `RMX1931_README.md`.
 
 ## Key Directories
 
