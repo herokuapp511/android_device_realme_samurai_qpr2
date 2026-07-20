@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     realme X2 Pro (samurai / SM8150) GameBar hardware paths.
+     CPU / battery / FPS paths are auto-detected by SysfsDetector.
+-->
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+
+    <!-- Adreno 640 (kgsl) -->
+    <string name="config_gpu_usage_path" translatable="false">/sys/class/kgsl/kgsl-3d0/gpu_busy_percentage</string>
+    <string name="config_gpu_clock_path" translatable="false">/sys/class/kgsl/kgsl-3d0/gpuclk</string>
+    <string name="config_gpu_temp_path" translatable="false">/sys/class/kgsl/kgsl-3d0/temp</string>
+    <integer name="config_gpu_temp_divider">1000</integer>
+    <integer name="config_gpu_clock_divider">1000000</integer>
+
+    <!-- SM8150 kernel 4.14: no bus_dcvs/DDR; use LLCC–DDR bw devfreq cur_freq -->
+    <string name="config_ram_freq_path" translatable="false">/sys/class/devfreq/soc:qcom,cpu-llcc-ddr-bw/cur_freq</string>
+    <!-- DDR thermal zone number varies; N/A until confirmed on-device (see session notes) -->
+    <string name="config_ram_temp_path" translatable="false">/sys/class/thermal/thermal_zone0/temp</string>
+    <integer name="config_ram_temp_divider">1000</integer>
+
+</resources>
