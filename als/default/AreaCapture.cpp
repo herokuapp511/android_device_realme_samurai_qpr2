@@ -47,19 +47,72 @@ AreaCapture::AreaCapture() {
 // frameworks/base/core/java/android/view/SurfaceControl.java
 sp<IBinder> AreaCapture::getInternalDisplayToken() {
     const auto displayIds = SurfaceComposerClient::getPhysicalDisplayIds();
+    if (displayIds.empty()) {
+        ALOGE("No physical display IDs found");
+        return nullptr;
+    }
     return SurfaceComposerClient::getPhysicalDisplayToken(displayIds[0]);
 }
 
 ndk::ScopedAStatus AreaCapture::getAreaBrightness(AreaRgbCaptureResult* _aidl_return) {
+    sp<IBinder> displayToken = getInternalDisplayToken();
+    if (displayToken == nullptr) {
+        ALOGE("Failed to get physical display token");
+        return ndk::ScopedAStatus::fromServiceSpecificError(-1);
+    }
+
+    Rect cropRect = m_screenshot_rect;
+
+    android::ui::DisplayState displayState;
+    if (SurfaceComposerClient::getDisplayState(displayToken, &displayState) == ::android::NO_ERROR) {
+        int w = 1080;
+        int h = 2400;
+        if (displayState.layerStackSpaceRect.width > 0 && displayState.layerStackSpaceRect.height > 0) {
+            if (displayState.orientation == android::ui::Rotation::Rotation90 ||
+                displayState.orientation == android::ui::Rotation::Rotation270) {
+                w = displayState.layerStackSpaceRect.height;
+                h = displayState.layerStackSpaceRect.width;
+            } else {
+                w = displayState.layerStackSpaceRect.width;
+                h = displayState.layerStackSpaceRect.height;
+            }
+        }
+
+        switch (displayState.orientation) {
+            case android::ui::Rotation::Rotation90:
+                cropRect = Rect(m_screenshot_rect.top,
+                                w - m_screenshot_rect.right,
+                                m_screenshot_rect.bottom,
+                                w - m_screenshot_rect.left);
+                break;
+            case android::ui::Rotation::Rotation180:
+                cropRect = Rect(w - m_screenshot_rect.right,
+                                h - m_screenshot_rect.bottom,
+                                w - m_screenshot_rect.left,
+                                h - m_screenshot_rect.top);
+                break;
+            case android::ui::Rotation::Rotation270:
+                cropRect = Rect(h - m_screenshot_rect.bottom,
+                                m_screenshot_rect.left,
+                                h - m_screenshot_rect.top,
+                                m_screenshot_rect.right);
+                break;
+            case android::ui::Rotation::Rotation0:
+            default:
+                cropRect = m_screenshot_rect;
+                break;
+        }
+    }
+
     DisplayCaptureArgs captureArgs;
-    captureArgs.displayToken = getInternalDisplayToken();
+    captureArgs.displayToken = displayToken;
     captureArgs.captureArgs.pixelFormat = static_cast<int32_t>(PixelFormat::RGBA_8888);
-    captureArgs.captureArgs.sourceCrop.left = m_screenshot_rect.left;
-    captureArgs.captureArgs.sourceCrop.top = m_screenshot_rect.top;
-    captureArgs.captureArgs.sourceCrop.right = m_screenshot_rect.right;
-    captureArgs.captureArgs.sourceCrop.bottom = m_screenshot_rect.bottom;
-    captureArgs.width = m_screenshot_rect.getWidth();
-    captureArgs.height = m_screenshot_rect.getHeight();
+    captureArgs.captureArgs.sourceCrop.left = cropRect.left;
+    captureArgs.captureArgs.sourceCrop.top = cropRect.top;
+    captureArgs.captureArgs.sourceCrop.right = cropRect.right;
+    captureArgs.captureArgs.sourceCrop.bottom = cropRect.bottom;
+    captureArgs.width = cropRect.getWidth();
+    captureArgs.height = cropRect.getHeight();
     captureArgs.captureArgs.secureLayerMode = ::android::gui::SecureLayerMode::Capture;
 
     sp<SyncScreenCaptureListener> captureListener = new SyncScreenCaptureListener();
@@ -74,12 +127,25 @@ ndk::ScopedAStatus AreaCapture::getAreaBrightness(AreaRgbCaptureResult* _aidl_re
         return ndk::ScopedAStatus::fromServiceSpecificError(-1);
     }
 
+    if (captureResults.buffer == nullptr) {
+        ALOGE("Capture buffer is null");
+        return ndk::ScopedAStatus::fromServiceSpecificError(-1);
+    }
+
     uint8_t* out;
     captureResults.buffer->lock(GraphicBuffer::USAGE_SW_READ_OFTEN, reinterpret_cast<void**>(&out));
 
     auto resultWidth = captureResults.buffer->getWidth();
     auto resultHeight = captureResults.buffer->getHeight();
     auto stride = captureResults.buffer->getStride();
+
+    if (out == nullptr || resultWidth <= 0 || resultHeight <= 0) {
+        ALOGE("Invalid capture buffer dimensions or pointer");
+        if (captureResults.buffer != nullptr) {
+            captureResults.buffer->unlock();
+        }
+        return ndk::ScopedAStatus::fromServiceSpecificError(-1);
+    }
 
     // we can sum this directly on linear light
     uint32_t rsum = 0, gsum = 0, bsum = 0;
