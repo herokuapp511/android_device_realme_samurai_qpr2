@@ -63,13 +63,13 @@ ndk::ScopedAStatus AreaCapture::getAreaBrightness(AreaRgbCaptureResult* _aidl_re
 
     Rect cropRect = m_screenshot_rect;
 
-    android::ui::DisplayState displayState;
+    ::android::ui::DisplayState displayState;
     if (SurfaceComposerClient::getDisplayState(displayToken, &displayState) == ::android::NO_ERROR) {
         int w = 1080;
         int h = 2400;
         if (displayState.layerStackSpaceRect.width > 0 && displayState.layerStackSpaceRect.height > 0) {
-            if (displayState.orientation == android::ui::Rotation::Rotation90 ||
-                displayState.orientation == android::ui::Rotation::Rotation270) {
+            if (displayState.orientation == ::android::ui::Rotation::Rotation90 ||
+                displayState.orientation == ::android::ui::Rotation::Rotation270) {
                 w = displayState.layerStackSpaceRect.height;
                 h = displayState.layerStackSpaceRect.width;
             } else {
@@ -79,25 +79,25 @@ ndk::ScopedAStatus AreaCapture::getAreaBrightness(AreaRgbCaptureResult* _aidl_re
         }
 
         switch (displayState.orientation) {
-            case android::ui::Rotation::Rotation90:
+            case ::android::ui::Rotation::Rotation90:
                 cropRect = Rect(m_screenshot_rect.top,
                                 w - m_screenshot_rect.right,
                                 m_screenshot_rect.bottom,
                                 w - m_screenshot_rect.left);
                 break;
-            case android::ui::Rotation::Rotation180:
+            case ::android::ui::Rotation::Rotation180:
                 cropRect = Rect(w - m_screenshot_rect.right,
                                 h - m_screenshot_rect.bottom,
                                 w - m_screenshot_rect.left,
                                 h - m_screenshot_rect.top);
                 break;
-            case android::ui::Rotation::Rotation270:
+            case ::android::ui::Rotation::Rotation270:
                 cropRect = Rect(h - m_screenshot_rect.bottom,
                                 m_screenshot_rect.left,
                                 h - m_screenshot_rect.top,
                                 m_screenshot_rect.right);
                 break;
-            case android::ui::Rotation::Rotation0:
+            case ::android::ui::Rotation::Rotation0:
             default:
                 cropRect = m_screenshot_rect;
                 break;
