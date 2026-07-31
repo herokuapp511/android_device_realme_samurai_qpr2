@@ -1,190 +1,71 @@
-on init
-    # Boot time cpusets
-    write /dev/cpuset/top-app/cpus 0-7
-    write /dev/cpuset/foreground/cpus 0-7
-    write /dev/cpuset/background/cpus 0-5
-    write /dev/cpuset/system-background/cpus 0-5
-    write /dev/cpuset/restricted/cpus 2-5
-
-    # Drop write bit from cpu_(min/max)_freq so that libqti-perfd can't set it
-    chmod 0444 /sys/module/msm_performance/parameters/cpu_min_freq
-    chmod 0444 /sys/module/msm_performance/parameters/cpu_max_freq
-
-    # Boot time FS tune
-    write /sys/block/sda/queue/iostats 0
-    write /sys/block/sda/queue/scheduler cfq
-    write /sys/block/sda/queue/iosched/slice_idle 0
-    write /sys/block/sda/queue/read_ahead_kb 2048
-    write /sys/block/sda/queue/nr_requests 256
-    write /sys/block/sdf/queue/iostats 0
-    write /sys/block/sdf/queue/scheduler cfq
-    write /sys/block/sdf/queue/iosched/slice_idle 0
-    write /sys/block/sdf/queue/read_ahead_kb 2048
-    write /sys/block/sdf/queue/nr_requests 256
-    write /sys/block/dm-0/queue/read_ahead_kb 2048
-    write /sys/block/dm-1/queue/read_ahead_kb 2048
-    write /sys/block/dm-2/queue/read_ahead_kb 2048
-
-    # Disable UFS powersaving
-    write /sys/devices/platform/soc/${ro.boot.bootdevice}/clkgate_enable 0
-    write /sys/devices/platform/soc/${ro.boot.bootdevice}/hibern8_on_idle_enable 0
-
-    # Disable powersaving
-    write /sys/module/lpm_levels/parameters/sleep_disabled 1
-
-on boot
-    # Disable performance profile by default
-    setprop perf_profile 0
-
-# Balanced
+# Balanced mode
 on property:perf_profile=0
-    write /sys/devices/system/cpu/cpufreq/policy0/scaling_governor schedutil
-    write /sys/devices/system/cpu/cpufreq/policy4/scaling_governor schedutil
-    write /sys/devices/system/cpu/cpufreq/policy7/scaling_governor schedutil
-
-    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 300000
-    write /sys/devices/system/cpu/cpu4/cpufreq/scaling_min_freq 710400
-    write /sys/devices/system/cpu/cpu7/cpufreq/scaling_min_freq 825600
-
-    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 1785600
-    write /sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq 2419200
-    # Gold+ (cpu7): SM8150 / 855+ table tops at 2956800 (not 2841600)
-    write /sys/devices/system/cpu/cpu7/cpufreq/scaling_max_freq 2956800
-
-    write /sys/module/cpu_boost/parameters/input_boost_freq "0:1036800"
-    write /sys/module/cpu_boost/parameters/input_boost_ms 120
-
-    write /sys/class/kgsl/kgsl-3d0/devfreq/min_freq 257000000
-    write /sys/class/kgsl/kgsl-3d0/devfreq/max_freq 675000000
-    # max_pwrlevel 0 = highest available GPU clock; default_pwrlevel is idle bias
-    write /sys/class/kgsl/kgsl-3d0/max_pwrlevel 0
-    write /sys/class/kgsl/kgsl-3d0/min_pwrlevel 5
-    write /sys/class/kgsl/kgsl-3d0/default_pwrlevel 5
-
+    # Scheduler migration thresholds
     write /proc/sys/kernel/sched_upmigrate "95 95"
-    write /proc/sys/kernel/sched_downmigrate "85 85"
-
-    write /proc/sys/vm/swappiness 100
-
-    # skin-therm
+    write /proc/sys/kernel/sched_downmigrate "85 85"    
+    # Restore neutral schedutil/WALT policy
+    write /sys/devices/system/cpu/cpu0/cpufreq/schedutil/hispeed_load 90
+    write /sys/devices/system/cpu/cpu0/cpufreq/schedutil/hispeed_freq 0
+    write /sys/devices/system/cpu/cpu0/cpufreq/schedutil/pl 0
+    write /sys/devices/system/cpu/cpu4/cpufreq/schedutil/hispeed_load 90
+    write /sys/devices/system/cpu/cpu4/cpufreq/schedutil/hispeed_freq 0
+    write /sys/devices/system/cpu/cpu4/cpufreq/schedutil/pl 0
+    write /sys/devices/system/cpu/cpu7/cpufreq/schedutil/hispeed_load 90
+    write /sys/devices/system/cpu/cpu7/cpufreq/schedutil/hispeed_freq 0
+    write /sys/devices/system/cpu/cpu7/cpufreq/schedutil/pl 0
+   # Boost set all cores input_boost_freq
+    write /sys/module/cpu_boost/parameters/input_boost_freq "0:0"
+	write /sys/module/cpu_boost/parameters/input_boost_ms 0
+    # Thermals
     write /sys/class/thermal/thermal_zone73/cdev0_upper_limit 12
     write /sys/class/thermal/thermal_zone73/cdev1_upper_limit 15
+    write /sys/class/kgsl/kgsl-3d0/throttling 1
+    # Props
+    setprop vendor.display.enable_rotator_ui 0
+    # Top App Stune Boost
+    write /dev/stune/foreground/schedtune.boost 0
+    write /dev/stune/foreground/schedtune.prefer_idle 1
+    write /dev/stune/top-app/schedtune.prefer_idle 1
+    # Setup runtime cpusets
+    write /dev/cpuset/foreground/cpus 0-2,4-6
+    # VM
+    write /proc/sys/vm/dirty_expire_centisecs 1000
+    write /proc/sys/vm/dirty_writeback_centisecs 3000
+    # MISC
+    write /sys/module/sync/parameters/fsync_enabled "Y"
 
-# Gaming
+# Gaming mode
 on property:perf_profile=1
-    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 300000
-    write /sys/devices/system/cpu/cpu4/cpufreq/scaling_min_freq 710400
-    write /sys/devices/system/cpu/cpu7/cpufreq/scaling_min_freq 825600
-    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 1785600
-    write /sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq 2419200
-    write /sys/devices/system/cpu/cpu7/cpufreq/scaling_max_freq 2956800
-
-    write /sys/module/cpu_boost/parameters/input_boost_freq "0:1036800"
-    write /sys/module/cpu_boost/parameters/input_boost_ms 20
-
-    write /sys/class/kgsl/kgsl-3d0/devfreq/min_freq 257000000
-    write /sys/class/kgsl/kgsl-3d0/devfreq/max_freq 675000000
-    write /sys/class/kgsl/kgsl-3d0/max_pwrlevel 0
-    write /sys/class/kgsl/kgsl-3d0/min_pwrlevel 4
-    write /sys/class/kgsl/kgsl-3d0/default_pwrlevel 4
-
+    # Prefer earlier migration toward the performance clusters
     write /proc/sys/kernel/sched_upmigrate "96 88"
     write /proc/sys/kernel/sched_downmigrate "55 66"
-
-    write /proc/sys/vm/swappiness 1
-
-    # skin-therm
+    # Set neutral schedutil/WALT policy.
+    write /sys/devices/system/cpu/cpu0/cpufreq/schedutil/hispeed_load 85
+    write /sys/devices/system/cpu/cpu0/cpufreq/schedutil/hispeed_freq 1209600
+    write /sys/devices/system/cpu/cpu0/cpufreq/schedutil/pl 1
+    write /sys/devices/system/cpu/cpu4/cpufreq/schedutil/hispeed_load 85
+    write /sys/devices/system/cpu/cpu4/cpufreq/schedutil/hispeed_freq 1612800
+    write /sys/devices/system/cpu/cpu4/cpufreq/schedutil/pl 1
+    write /sys/devices/system/cpu/cpu7/cpufreq/schedutil/hispeed_load 85
+    write /sys/devices/system/cpu/cpu7/cpufreq/schedutil/hispeed_freq 1612800
+    write /sys/devices/system/cpu/cpu7/cpufreq/schedutil/pl 1
+    # Boost set all cores input_boost_freq
+	write /sys/module/cpu_boost/parameters/input_boost_freq "0:1036800"
+    write /sys/module/cpu_boost/parameters/input_boost_ms 120
+   # Thermals
     write /sys/class/thermal/thermal_zone73/cdev0_upper_limit 00
     write /sys/class/thermal/thermal_zone73/cdev1_upper_limit 00
-
-# Battery Saving
-on property:perf_profile=2
-    write /sys/devices/system/cpu/cpufreq/policy0/scaling_governor conservative
-    write /sys/devices/system/cpu/cpufreq/policy4/scaling_governor ondemand
-    write /sys/devices/system/cpu/cpufreq/policy7/scaling_governor conservative
-
-    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 300000
-    write /sys/devices/system/cpu/cpu4/cpufreq/scaling_min_freq 710400
-    write /sys/devices/system/cpu/cpu7/cpufreq/scaling_min_freq 825600
-
-    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 940800
-    write /sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq 1171200
-    write /sys/devices/system/cpu/cpu7/cpufreq/scaling_max_freq 1401600
-
-    write /sys/module/cpu_boost/parameters/input_boost_freq "0:1036800"
-    write /sys/module/cpu_boost/parameters/input_boost_ms 120
-
-    write /sys/class/kgsl/kgsl-3d0/devfreq/min_freq 257000000
-    write /sys/class/kgsl/kgsl-3d0/devfreq/max_freq 427000000
-    write /sys/class/kgsl/kgsl-3d0/max_pwrlevel 2
-    write /sys/class/kgsl/kgsl-3d0/min_pwrlevel 5
-    write /sys/class/kgsl/kgsl-3d0/default_pwrlevel 5
-
-    write /proc/sys/kernel/sched_upmigrate "95 95"
-    write /proc/sys/kernel/sched_downmigrate "85 85"
-
-    write /proc/sys/vm/swappiness 100
-
-    # skin-therm
-    write /sys/class/thermal/thermal_zone73/cdev0_upper_limit 12
-    write /sys/class/thermal/thermal_zone73/cdev1_upper_limit 15
-
-    setprop vendor.display.enable_rotator_ui 0
-
-on property:init.svc.vendor.charger=running
-    # Keep one LITTLE and one big
-    write /sys/devices/system/cpu/cpu1/online 0
-    write /sys/devices/system/cpu/cpu2/online 0
-    write /sys/devices/system/cpu/cpu3/online 0
-    write /sys/devices/system/cpu/cpu5/online 0
-    write /sys/devices/system/cpu/cpu6/online 0
-    write /sys/devices/system/cpu/cpu7/online 0
-    wait /dev/block/bootdevice
-
-    # Enable UFS powersaving
-    write /sys/devices/platform/soc/${ro.boot.bootdevice}/clkgate_enable 1
-    write /sys/devices/platform/soc/${ro.boot.bootdevice}/hibern8_on_idle_enable 1
-
-    # Turn on sleep modes
-    write /sys/module/lpm_levels/parameters/sleep_disabled 0
-
-on enable-low-power
-    # Runtime idle stack (must match charger path + target.power).
-    # Boot keeps lpm_levels.sleep_disabled=1 (cmdline + on init); clear it here.
-    write /sys/devices/platform/soc/${ro.boot.bootdevice}/clkgate_enable 1
-    write /sys/devices/platform/soc/${ro.boot.bootdevice}/hibern8_on_idle_enable 1
-    write /sys/module/lpm_levels/parameters/sleep_disabled 0
-    write /sys/power/mem_sleep deep
-    write /sys/module/printk/parameters/console_suspend Y
-
-on property:sys.boot_completed=1
-    trigger enable-low-power
-
-on property:init.svc.recovery=running
-    trigger enable-low-power
-
-on late-fs
-    # Boot time FS tune
-    write /sys/block/dm-3/queue/read_ahead_kb 2048
-
-    # Runtime FS tuning: as we have init boottime setting and kernel patch setting
-    # default readahead to 2048KB. We should adjust the setting upon boot_complete
-    # for runtime performance
-    write /sys/block/sda/queue/read_ahead_kb 128
-    write /sys/block/sda/queue/nr_requests 128
-    write /sys/block/sda/queue/iostats 1
-    write /sys/block/sdf/queue/read_ahead_kb 128
-    write /sys/block/sdf/queue/nr_requests 128
-    write /sys/block/sdf/queue/iostats 1
-    write /sys/block/dm-0/queue/read_ahead_kb 128
-    write /sys/block/dm-1/queue/read_ahead_kb 128
-    write /sys/block/dm-2/queue/read_ahead_kb 128
-    write /sys/block/dm-3/queue/read_ahead_kb 128
-
-on post-fs-data
-
-on property:perf_profile=1
+    write /sys/class/kgsl/kgsl-3d0/throttling 0
+   # Props
     setprop vendor.display.enable_rotator_ui 1
-
-on property:perf_profile=0
-    setprop vendor.display.enable_rotator_ui 0
+    # Top App Stune Boost
+    write /dev/stune/foreground/schedtune.boost 30
+    write /dev/stune/foreground/schedtune.prefer_idle 0
+    write /dev/stune/top-app/schedtune.prefer_idle 0
+    # Setup runtime cpusets
+    write /dev/cpuset/foreground/cpus 0-2,4-7
+    # VM
+    write /proc/sys/vm/dirty_expire_centisecs 500
+    write /proc/sys/vm/dirty_writeback_centisecs 3000
+    # MISC
+    write /sys/module/sync/parameters/fsync_enabled "N"
