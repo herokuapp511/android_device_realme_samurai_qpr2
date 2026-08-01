@@ -10,9 +10,9 @@
 <resources>
     <string-array name="charging_speed_entries">
         <item>Default (full speed)</item>
-        <item>~1.5–1.8A · 15W class</item>
-        <item>~2A class</item>
-        <item>~3A class</item>
+        <item>~15W class</item>
+        <item>~18W class</item>
+        <item>~27W class</item>
     </string-array>
     <string-array name="charging_speed_values">
         <item>0</item>

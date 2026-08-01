@@ -5,24 +5,53 @@
 
 package org.lineageos.settings.chargespeed;
 
-import android.app.Fragment;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
-import com.android.settingslib.collapsingtoolbar.CollapsingToolbarBaseActivity;
-
-public class ChargingSpeedActivity extends CollapsingToolbarBaseActivity {
+public class ChargingSpeedActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Fragment fragment = getFragmentManager()
-                .findFragmentById(com.android.settingslib.collapsingtoolbar.R.id.content_frame);
-        if (fragment == null) {
-            getFragmentManager().beginTransaction()
-                    .add(com.android.settingslib.collapsingtoolbar.R.id.content_frame,
-                            new ChargingSpeedFragment())
-                    .commit();
+        if (!CoolDownUtils.isSupported()) {
+            finish();
+            return;
         }
+
+        String[] entries = getResources().getStringArray(R.array.charging_speed_entries);
+        String[] valuesStr = getResources().getStringArray(R.array.charging_speed_values);
+        
+        int saved = CoolDownUtils.loadSaved(this);
+        int selectedIndex = 0;
+        for (int i = 0; i < valuesStr.length; i++) {
+            if (String.valueOf(saved).equals(valuesStr[i])) {
+                selectedIndex = i;
+                break;
+            }
+        }
+
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.charging_speed_dialog_title)
+                .setSingleChoiceItems(entries, selectedIndex, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        try {
+                            int level = Integer.parseInt(valuesStr[which]);
+                            CoolDownUtils.saveAndApply(ChargingSpeedActivity.this, level);
+                        } catch (NumberFormatException ignored) {
+                        }
+                        dialog.dismiss();
+                    }
+                })
+                .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        finish();
+                    }
+                })
+                .show();
     }
 }
