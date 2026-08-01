@@ -60,7 +60,7 @@ on boot
 
     # OTG
     chown system system /sys/class/power_supply/usb/otg_switch
-    chmod 06666 /sys/class/power_supply/usb/otg_switch
+    chmod 0666 /sys/class/power_supply/usb/otg_switch
 
     # wakeup reason
     chown system system /sys/kernel/wakeup_reasons/wakeup_stastisc_reset
@@ -112,7 +112,7 @@ on boot
     chmod 0666 /sys/kernel/oppo_display/aod_light_mode_set
     chmod 0666 /sys/kernel/oppo_display/serial_number
     chmod 0666 /sys/kernel/oppo_display/hdr10
-    chown 0666 /sys/kernel/oppo_display/fp_state
+    chmod 0666 /sys/kernel/oppo_display/fp_state
 
     # Touchpanel
     chown system system /proc/touchpanel/tp_fw_update
@@ -155,6 +155,6 @@ service vendor.sensors-hal-2-1-multihal /vendor/bin/hw/android.hardware.sensors@
     class hal
     user system
     group system wakelock context_hub input
-    writepid /dev/cpuset/system-background/tasks
+    task_profiles ServiceCapacityLow
     capabilities BLOCK_SUSPEND
     rlimit rtprio 10 10
