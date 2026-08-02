@@ -17,4 +17,17 @@
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
     </style>
+    
+    <style name="Theme.ChargingSpeed.Transparent" parent="@android:style/Theme.DeviceDefault.DayNight">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:backgroundDimEnabled">false</item>
+        <item name="android:windowAnimationStyle">@null</item>
+        <item name="android:colorAccent">@android:color/system_accent1_600</item>
+        <item name="colorAccent">@android:color/system_accent1_600</item>
+        <item name="colorPrimary">@android:color/system_accent1_600</item>
+    </style>
 </resources>

@@ -24,7 +24,7 @@
         <activity
             android:name=".ChargingSpeedActivity"
             android:label="@string/charging_speed_pref_title"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:theme="@style/Theme.ChargingSpeed.Transparent"
             android:exported="true"
             android:excludeFromRecents="true" />
 

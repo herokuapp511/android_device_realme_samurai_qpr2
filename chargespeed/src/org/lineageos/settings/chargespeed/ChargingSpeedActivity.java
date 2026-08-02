@@ -15,6 +15,7 @@ public class ChargingSpeedActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        overridePendingTransition(0, 0);
 
         if (!CoolDownUtils.isSupported()) {
             finish();
@@ -53,5 +54,11 @@ public class ChargingSpeedActivity extends Activity {
                     }
                 })
                 .show();
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(0, 0);
     }
 }
