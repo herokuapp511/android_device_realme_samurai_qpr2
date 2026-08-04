@@ -116,10 +116,11 @@ Do **not** duplicate under `overlay-lineage/.../SystemUI/`.
 |---------|--------|--------|
 | Ambient / pickup | **OplusDoze** + `OplusDozeResCommon` | RealmeParts doze activity/service disabled |
 | Charge limit | **Lineage Health** on `mmi_charging_enable` | RealmeParts SmartCharging disabled |
+| Charging speed | **ChargingSpeed** app over LineageParts | Sets cool_down levels via dialog; does not touch mmi_charging_enable |
 | Display extras | RealmeParts (DC/HBM/sRGB/OTG/game) | Sysfs under `/sys/kernel/oppo_display` (0660 system) |
 
 ### Vibrator / DRM
-- Vibrator HAL: `vendor.qti.hardware.vibrator.service.oplus` (hardware/oplus QTI path; aw8697 via `/sys/class/leds/vibrator`).
+- Vibrator HAL: `vendor.qti.hardware.vibrator.service.samurai` (device local HAL; aw8697 via `/sys/class/leds/vibrator`).
 - Copy CAF `excluded-input-devices.xml` so touchscreen input does not double-trigger haptics.
 - Ship `wvmkiller` with DRM/clearkey packages.
 
@@ -164,5 +165,5 @@ Keep device `manifest.xml` HAL versions aligned with the actual service registra
 - **SELinux**: Every new executable or service needs a corresponding type in `sepolicy/`, a file context in `file_contexts`, and a service context if it registers with hwservicemanager/servicemanager.
 - **HIDL vs AIDL**: Existing HALs use HIDL (fingerprint 2.3, sensors 2.1). New services (syshelper) use AIDL with the NDK backend. Don't mix HIDL and AIDL in the same service.
 - **Proprietary blobs**: Listed in `proprietary-files.txt` with SHA-1 checksums. After adding or updating a blob, run `./update-sha1sums.py` and commit the updated checksums alongside the change.
-- **Init permissions**: Use valid octal modes (`0666`/`0660`, never `06666`). `chown` takes user/group; `chmod` takes mode — do not swap them (see historical `fp_state` bug).
+- **Init scripts**: Use valid octal modes (`0666`/`0660`, never `06666`). `chown` takes user/group; `chmod` takes mode — do not swap them. Avoid deprecated `writepid` directives for cpusets; use `task_profiles` instead (e.g., `task_profiles ServiceCapacityLow`).
 - **Touch HAL nodes**: When adding `/proc/touchpanel/*` gesture paths, chown to `system` and chmod `0660` so `vendor.lineage.touch-service.oplus` can access them.
