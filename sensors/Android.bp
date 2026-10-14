@@ -30,7 +30,6 @@ cc_binary {
         "liblog",
         "libpower",
         "libutils",
-        "libbinder_ndk",
         "vendor.lineage.oplus_als-V1-ndk",
     ],
     static_libs: [
