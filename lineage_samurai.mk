@@ -44,9 +44,6 @@ RISING_MAINTAINER := NAYEM
 # Disable/enable blur support, false by default
 TARGET_ENABLE_BLUR := true
 
-# Whether to ship aperture camera, false by default
-PRODUCT_NO_CAMERA := true
-
 # CORE build flags
 WITH_GMS := true
 TARGET_USES_PICO_GAPPS := true
