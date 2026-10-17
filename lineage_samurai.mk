@@ -27,3 +27,26 @@ PRODUCT_BUILD_PROP_OVERRIDES += \
     SystemName=RMX1931
 
 PRODUCT_GMS_CLIENTID_BASE := android-oppo
+
+# RisingOS stuff
+# Lunch banner maintainer variable
+RISING_MAINTAINER="NAYEM"
+
+# Chipset/Maintainer properties (ro.rising.chipset/ro.rising.maintainer)
+# Set RISING_MAINTAINER for version control
+# (Optional if builder is setting properties via init_<device>.cpp)
+PRODUCT_BUILD_PROP_OVERRIDES += \
+    RisingChipset="Snapdragon™ 855+" \
+    RisingMaintainer="NAYEM"
+
+RISING_MAINTAINER := NAYEM
+
+# Disable/enable blur support, false by default
+TARGET_ENABLE_BLUR := true
+
+# Whether to ship aperture camera, false by default
+PRODUCT_NO_CAMERA := true
+
+# CORE build flags
+WITH_GMS := true
+TARGET_USES_PICO_GAPPS := true
