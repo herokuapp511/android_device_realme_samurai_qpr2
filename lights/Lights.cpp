@@ -58,13 +58,16 @@ namespace light {
 
 Lights::Lights() {
     std::map<int, std::function<void(int id, const HwLightState&)>> lights_{
-            {(int)LightType::BACKLIGHT, {}}};
+            {(int)LightType::BACKLIGHT,
+             [this](int, const HwLightState& state) { handleBacklight(state); }}};
 
     std::vector<HwLight> availableLights;
     for (auto const& pair : lights_) {
         int id = pair.first;
         HwLight hwLight{};
         hwLight.id = id;
+        hwLight.type = static_cast<LightType>(id);
+        hwLight.ordinal = 0;
         availableLights.emplace_back(hwLight);
     }
     mAvailableLights = availableLights;
@@ -78,7 +81,9 @@ ndk::ScopedAStatus Lights::setLightState(int id, const HwLightState& state) {
         return ndk::ScopedAStatus::fromExceptionCode(EX_UNSUPPORTED_OPERATION);
     }
 
-    it->second(id, state);
+    if (it->second) {
+        it->second(id, state);
+    }
 
     return ndk::ScopedAStatus::ok();
 }
@@ -92,15 +97,15 @@ ndk::ScopedAStatus Lights::getLights(std::vector<HwLight>* lights) {
 
 void Lights::handleBacklight(const HwLightState& state) {
     int maxBrightness = get("/sys/class/backlight/panel0-backlight/max_brightness", -1);
-        if (maxBrightness < 0) {
-            maxBrightness = 2047;
-        }
+    if (maxBrightness <= 0) {
+        maxBrightness = 1023;
+    }
 
     int sentBrightness = rgbToBrightness(state);
-    int brightness = sentBrightness * 1023 / 255;
-        LOG(DEBUG) << "Writing backlight brightness " << brightness
-                   << " (orig " << sentBrightness << ")";
-        set("/sys/class/backlight/panel0-backlight/brightness", brightness);
+    int brightness = sentBrightness * maxBrightness / 255;
+    LOG(DEBUG) << "Writing backlight brightness " << brightness
+               << " (orig " << sentBrightness << ")";
+    set("/sys/class/backlight/panel0-backlight/brightness", brightness);
 }
 
 }  // namespace light
