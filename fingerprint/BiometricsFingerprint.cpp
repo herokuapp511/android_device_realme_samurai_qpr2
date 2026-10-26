@@ -118,13 +118,19 @@ public:
 
     Return<void> onTouchUp(uint64_t deviceId) {
         set(FP_PRESS_PATH, STATUS_OFF);
-        return mClientCallback->onAcquired(deviceId, android::hardware::biometrics::fingerprint::V2_1::FingerprintAcquiredInfo::ACQUIRED_VENDOR, 0);
-	}
+        if (mClientCallback != nullptr) {
+            return mClientCallback->onAcquired(deviceId, android::hardware::biometrics::fingerprint::V2_1::FingerprintAcquiredInfo::ACQUIRED_VENDOR, 0);
+        }
+        return Void();
+    }
 
     Return<void> onTouchDown(uint64_t deviceId) {
         set(FP_PRESS_PATH, STATUS_ON);
-        return mClientCallback->onAcquired(deviceId, android::hardware::biometrics::fingerprint::V2_1::FingerprintAcquiredInfo::ACQUIRED_VENDOR, 1);
-	}
+        if (mClientCallback != nullptr) {
+            return mClientCallback->onAcquired(deviceId, android::hardware::biometrics::fingerprint::V2_1::FingerprintAcquiredInfo::ACQUIRED_VENDOR, 1);
+        }
+        return Void();
+    }
     Return<void> onSyncTemplates(uint64_t deviceId, const hidl_vec<uint32_t>& fingerId, uint32_t remaining) {
         ALOGE("onSyncTemplates %lu %zu %u", deviceId, fingerId.size(), remaining);
         myDeviceId = deviceId;
@@ -290,7 +296,7 @@ Return<RequestStatus> BiometricsFingerprint::authenticate(uint64_t operationId, 
     if (status == RequestStatus::SYS_OK) {
         setFingerprintScreenState(true);
     }
-    return OppoToAOSPRequestStatus(mOppoBiometricsFingerprint->authenticate(operationId, gid));
+    return status;
 }
 
 void BiometricsFingerprint::setFingerprintScreenState(const bool on) {
