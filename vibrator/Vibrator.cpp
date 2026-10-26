@@ -366,6 +366,7 @@ LedVibratorDevice::LedVibratorDevice() {
         ALOGE("open %s failed, errno = %d", devicename, errno);
         return;
     }
+    close(fd);
 
     mDetected = true;
 }

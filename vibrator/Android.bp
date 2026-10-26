@@ -13,7 +13,6 @@ cc_library_shared {
         "libcutils",
         "libutils",
         "liblog",
-        "libqtivibratoreffect",
         "libbinder_ndk",
         "android.hardware.vibrator-ndk_platform",
     ],
@@ -39,6 +38,6 @@ cc_binary {
         "libbase",
         "libbinder_ndk",
         "android.hardware.vibrator-ndk_platform",
-        "vendor.qti.hardware.vibrator.impl",
+        "vendor.qti.hardware.vibrator.impl.RMX1931",
     ],
 }
