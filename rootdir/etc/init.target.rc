@@ -61,7 +61,6 @@ on late-fs
     start surfaceflinger
     start bootanim
     start vendor.hwcomposer-2-4
-    start vendor.configstore-hal
 
     # Wait for hwservicemanager ready since fsck might be triggered in mount_all --late
     # In such case, init won't responce the property_set from hwservicemanager and then
@@ -153,8 +152,7 @@ on charger
     setprop sys.usb.controller a600000.dwc3
     setprop sys.usb.configfs 1
 
-service vendor.lowi /vendor/bin/sscrpcd
-   class core
-   user system
-   group system wakelock
-   capabilities BLOCK_SUSPEND
+service vendor.cdsprpcd /vendor/bin/cdsprpcd
+    class main
+    user system
+    group system

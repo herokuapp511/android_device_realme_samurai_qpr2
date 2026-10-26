@@ -86,7 +86,6 @@ on early-boot
     write /sys/kernel/boot_slpi/boot 1
     write /sys/devices/virtual/cvp/cvp/boot 1
     exec u:r:vendor_qti_init_shell:s0 -- /vendor/bin/init.qcom.early_boot.sh
-    exec u:r:vendor_qti_init_shell:s0 -- /vendor/bin/init.qti.can.sh
 
     chown system system /mnt/vendor/persist/data/pfm/licenses
     chmod 0775 /mnt/vendor/persist/data/pfm/licenses
@@ -346,9 +345,6 @@ on post-fs-data
     #Create dir for TUI
     mkdir /data/vendor/tui 0700 system drmrpc
 
-    #Start move time data to /data/vendor once post-fs-data done
-    start vendor.move_time_data
-
 service iop /system/vendor/bin/iop
     class main
     user root
@@ -435,11 +431,6 @@ on property:vendor.radio.atfwd.start=false
 
 on property:vendor.media.target.version=*
     setprop vendor.sys.media.target.version ${vendor.media.target.version}
-
-service qcom-c_core-sh  /vendor/bin/init.qcom.class_core.sh
-    class core
-    user root
-    oneshot
 
 service qcom-c_main-sh /vendor/bin/init.class_main.sh
     class main
@@ -529,14 +520,6 @@ service hostapd_fst /vendor/bin/hw/hostapd -dd -g /data/vendor/wifi/hostapd/glob
     disabled
     oneshot
 
-service vendor.wigig_hostapd /vendor/bin/hw/hostapd -dd  -j wigighostapd /data/vendor/wifi/hostapd/wigig_hostapd.conf
-    class late_start
-    capabilities NET_ADMIN NET_RAW
-    user wifi
-    group wifi inet keystore
-    oneshot
-    disabled
-
 service vendor.ril-daemon2 /vendor/bin/hw/rild -c 2
     class main
     user radio
@@ -570,12 +553,6 @@ on charger
 
 on property:vendor.display.lcd_density=*
     setprop ro.sf.lcd_density ${vendor.display.lcd_density}
-
-service time_daemon /vendor/bin/time_daemon
-    class main
-    user system
-    group system
-    capabilities SYS_TIME
 
 on property:ro.vendor.radio.noril=*
     setprop ro.radio.noril ${ro.vendor.radio.noril}
