@@ -119,9 +119,10 @@ Return<void> FingerprintInscreen::onRelease() {
 }
 
 Return<void> FingerprintInscreen::onShowFODView() {
-    dcDimState = get(DC_DIM_PATH, FP_ENDIT);
     if (!mFodCircleVisible) {
+        dcDimState = get(DC_DIM_PATH, FP_ENDIT);
         set(DC_DIM_PATH, FP_ENDIT);
+        mFodCircleVisible = true;
     }
     if(get(DOZE_STATUS, FP_ENDIT)) {
     isDreamState = true;
@@ -137,6 +138,7 @@ Return<void> FingerprintInscreen::onHideFODView() {
     set(DC_DIM_PATH, dcDimState);
     if(!isDreamState)
     set(DIMLAYER_PATH, FP_ENDIT);
+    mFodCircleVisible = false;
     return Void();
 }
 
