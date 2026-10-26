@@ -38,7 +38,7 @@ ro.camera.attr.detect.enable=1
 ro.camera.notify_nfc=1
 ro.camera.temperature.limit=470
 persist.vendor.camera.light_ae.enable=1
-vendor.camera.aux.packagelist=org.codeaurora.snapcam,com.android.camera,org.lineageos.snap
+vendor.camera.aux.packagelist=org.codeaurora.snapcam,com.android.camera,org.lineageos.snap,com.oppo.camera
 
 # Charger
 ro.charger.enable_suspend=true
@@ -82,9 +82,6 @@ vendor.media.vpp.enable=true
 
 # Memory optimizations
 ro.vendor.qti.sys.fw.bservice_enable=true
-
-# Mock
-persist.sys.force_sw_gles=1
 
 # Netflix custom property
 ro.netflix.bsp_rev=Q855-16947-1

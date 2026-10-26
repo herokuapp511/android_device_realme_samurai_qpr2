@@ -27,7 +27,7 @@ vendor/lib64/libmdsprpc.so
 
 # ADSP modules
 odm/lib/rfsa/adsp/libsnpe_dsp_v65_domains_v2_skel.so:vendor/lib/rfsa/adsp/libsnpe_dsp_v65_domains_v2_skel.so
-odm/lib/rfsa/adsp/libsnpe_dsp_v66_domains_v2_skel.so:vendor/lib/rfsa/adsp/libsnpe_dsp_v65_domains_v2_skel.so
+odm/lib/rfsa/adsp/libsnpe_dsp_v66_domains_v2_skel.so:vendor/lib/rfsa/adsp/libsnpe_dsp_v66_domains_v2_skel.so
 odm/lib/rfsa/adsp/libsnpe_dsp_skel.so
 vendor/lib/rfsa/adsp/capi_v2_dap_cpdp.so
 vendor/lib/rfsa/adsp/libVC1Dec.so
@@ -42,7 +42,6 @@ vendor/lib/rfsa/adsp/libfastcvadsp.so
 vendor/lib/rfsa/adsp/libfastcvdsp_skel.so
 vendor/lib/rfsa/adsp/libscveObjectSegmentation_skel.so
 vendor/lib/rfsa/adsp/libscveT2T_skel.so
-vendor/lib/rfsa/adsp/libsnpe_dsp_v66_domains_v2_skel.so
 vendor/lib/rfsa/adsp/libsns_device_mode_skel.so
 vendor/lib/rfsa/adsp/libsns_low_lat_stream_skel.so
 
@@ -70,7 +69,6 @@ vendor/lib64/libtinycompress.so
 # Audio extensions
 vendor/lib/liba2dpoffload.so
 vendor/lib/libbatterylistener.so
-vendor/lib/libcomprcapture.so
 vendor/lib/libcomprcapture.so
 vendor/lib/libexthwplugin.so
 vendor/lib/libhdmiedid.so
@@ -104,12 +102,8 @@ vendor/lib64/vendor.qti.hardware.audiohalext@1.0.so
 # AudioHal Ext
 system_ext/lib/vendor.qti.hardware.audiohalext@1.0.so
 system_ext/lib64/vendor.qti.hardware.audiohalext@1.0.so
-vendor/lib/hw/vendor.qti.hardware.audiohalext@1.0-impl.so
 vendor/lib/libaudioconfigstore.so
-vendor/lib/vendor.qti.hardware.audiohalext@1.0.so
-vendor/lib64/hw/vendor.qti.hardware.audiohalext@1.0-impl.so
 vendor/lib64/libaudioconfigstore.so
-vendor/lib64/vendor.qti.hardware.audiohalext@1.0.so
 
 # Audio FX modules
 odm/lib/soundfx/libhaptic_effect.so
@@ -240,7 +234,6 @@ odm/lib64/libVDDualCameraBlurlessAPI.so
 odm/lib64/libVDExternal.so
 odm/lib64/libVDEyeEnhance.so
 odm/lib64/libVDSuperPhotoAPI.so
-odm/lib64/libVDUpScale.so
 odm/lib64/libVDUpScale.so
 odm/lib64/libXDocProcessSDK.so
 odm/lib64/lib_rectify.so
@@ -663,7 +656,6 @@ vendor/lib64/libasn1crtx.so
 vendor/lib64/libbatching.so
 vendor/lib64/libcacertclient.so
 vendor/lib64/libcdfw.so
-vendor/lib64/libcdfw_remote_api.so
 vendor/lib64/libcdfw_remote_api.so
 vendor/lib64/libdataitems.so
 vendor/lib64/libgdtap.so
@@ -1290,12 +1282,6 @@ vendor/lib/vendor.qti.hardware.sensorscalibrate@1.0.so
 vendor/lib64/hw/vendor.qti.hardware.sensorscalibrate@1.0-impl.so
 vendor/lib64/libsensorcal.so
 vendor/lib64/libsensorslog.so
-vendor/lib64/libsns_device_mode_stub.so
-vendor/lib64/libsns_fastRPC_util.so
-vendor/lib64/libsns_low_lat_stream_stub.so
-vendor/lib64/libsns_registry_skel.so
-vendor/lib64/libsnsapi.so
-vendor/lib64/libsnsdiaglog.so
 vendor/lib64/libssc.so
 vendor/lib64/libssc_default_listener.so
 vendor/lib64/sensors.ssc.so
