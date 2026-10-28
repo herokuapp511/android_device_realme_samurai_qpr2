@@ -31,6 +31,10 @@ $(call inherit-product, vendor/realme/samurai/samurai-vendor.mk)
 # Dolby Atmos (LunarisAOSP)
 $(call inherit-product, vendor/lunaris/dolby/dolby.mk)
 
+# RealmeUI Stock Camera (OppoCamera)
+$(call inherit-product-if-exists, vendor/realme/camera/RMX1931-camera.mk)
+$(call inherit-product-if-exists, vendor/realme/RMX1931-camera/RMX1931-camera.mk)
+
 # Boot animation
 TARGET_SCREEN_HEIGHT := 2400
 TARGET_SCREEN_WIDTH := 1080
