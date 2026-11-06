@@ -6,6 +6,7 @@
 # Value matches the proven oneplus/sm8150-common reference (same 4.14.357 kernel),
 # which loads the full program set; a lower value would skip programs gated 5.4-5.10.
 ro.bpf.kver_override=5.10.239
+ro.build.product=samurai
 
 # Art
 dalvik.vm.dex2oat64.enabled=true
