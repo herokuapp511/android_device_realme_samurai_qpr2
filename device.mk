@@ -312,7 +312,7 @@ $(call soong_config_set,libinit,vendor_init_lib,libinit_samurai)
 PRODUCT_PACKAGES += \
     fstab.qcom \
     init.class_main.sh \
-    init.oppo.rc \
+    init.oplus.rc \
     init.qcom.early_boot.sh \
     init.qcom.rc \
     init.qcom.power.rc \
