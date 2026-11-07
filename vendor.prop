@@ -151,6 +151,9 @@ persist.log.tag.vppservice=S
 # Media
 debug.media.codec2=2
 debug.stagefright.c2inputsurface=-1
+persist.log.tag.QC2Buf=W
+persist.log.tag.QC2V4l2Codec=E
+vendor.media.omx=0
 
 # NFC
 ro.hardware.nfc_nci=nqx.default
