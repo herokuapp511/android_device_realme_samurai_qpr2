@@ -180,7 +180,7 @@ PRODUCT_PACKAGES += \
 
 # Camera
 PRODUCT_PACKAGES += \
-    android.frameworks.displayservice@1.0 \
+    lineage.frameworks.displayservice@1.0 \
     android.hardware.camera.provider@2.4-impl:64 \
     android.hardware.camera.provider@2.4-service_64 \
     libcamera2ndk_vendor \
@@ -276,12 +276,8 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/gps.conf:$(TARGET_COPY_OUT_ODM)/etc/gps.conf
 
 # Health
-# Proprietary android.hardware.health@2.1-service.samurai is started from init;
-# AOSP unit is installed but disabled there when the .samurai binary is present.
 PRODUCT_PACKAGES += \
-    android.hardware.health@2.1-impl:64 \
-    android.hardware.health@2.1-impl.recovery \
-    android.hardware.health@2.1-service
+    android.hardware.health-service.qti
 
 # Lineage Health — sole charge-limit owner (mmi_charging_enable).
 # RealmeParts SmartCharging is disabled so it cannot fight this node.
@@ -383,12 +379,8 @@ PRODUCT_PACKAGES += \
 
 # NFC
 PRODUCT_PACKAGES += \
-    android.hardware.nfc@1.2-service \
-    android.hardware.nfc@1.2.vendor \
+    android.hardware.nfc-service.nxp \
     com.android.nfc_extras \
-    NfcNci \
-    nqnfcinfo \
-    SecureElement \
     Tag
 
 # Codec2
