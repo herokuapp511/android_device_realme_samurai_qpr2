@@ -21,16 +21,14 @@ bluetooth.profile.sap.server.enabled=true
 bluetooth.profile.tbs.server.enabled=true
 bluetooth.profile.vc.server.enabled=true
 
+# Display
+ro.surface_flinger.has_wide_color_display=true
+
 # Google Assistant
 ro.opa.eligible_device=true
 
 # Incremental FS
 ro.incremental.enable=1
-
-# IORap
-ro.iorapd.enable=true
-iorapd.perfetto.enable=true
-iorapd.readahead.enable=true
 
 # LMKD
 ro.config.low_ram=false
