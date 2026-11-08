@@ -1,2 +1,2 @@
-# Allow gpuservice to inspect bpf map file attributes
-allow gpuservice fs_bpf:file getattr;
+# Allow gpuservice to inspect bpf map file attributes and read/write
+allow gpuservice fs_bpf:file { getattr read write };
