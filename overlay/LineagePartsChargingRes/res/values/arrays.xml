@@ -18,4 +18,18 @@
         <item>1</item>
         <item>2</item>
     </string-array>
+
+    <string-array name="charging_speed_entries">
+        <item>Default (full speed)</item>
+        <item>~15W class</item>
+        <item>~18W class</item>
+        <item>~27W class</item>
+    </string-array>
+
+    <string-array name="charging_speed_values">
+        <item>0</item>
+        <item>2</item>
+        <item>3</item>
+        <item>5</item>
+    </string-array>
 </resources>
