@@ -12,6 +12,7 @@
     <uses-permission
         android:name="android.permission.WRITE_SECURE_SETTINGS"
         tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="lineageos.permission.MANAGE_REMOTE_PREFERENCES" />
 
     <application
         android:label="@string/charging_speed_title"
@@ -20,13 +21,28 @@
         android:defaultToDeviceProtectedStorage="true"
         android:directBootAware="true">
 
-        <!-- Only launched from Charging control → Speed limit intent -->
+        <!-- Only launched from Charging control → Charging Speed Limit intent -->
         <activity
             android:name=".ChargingSpeedActivity"
             android:label="@string/charging_speed_pref_title"
             android:theme="@style/Theme.ChargingSpeed.Transparent"
             android:exported="true"
-            android:excludeFromRecents="true" />
+            android:excludeFromRecents="true">
+            <meta-data
+                android:name="org.lineageos.settings.summary.receiver"
+                android:value="org.lineageos.settings.chargespeed.ChargingSpeedUpdater" />
+            <meta-data
+                android:name="org.lineageos.settings.summary.key"
+                android:value="samurai_charging_speed_limit" />
+        </activity>
+
+        <receiver
+            android:name=".ChargingSpeedUpdater"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="lineageos.intent.action.UPDATE_PREFERENCE" />
+            </intent-filter>
+        </receiver>
 
         <receiver
             android:name=".BootCompletedReceiver"

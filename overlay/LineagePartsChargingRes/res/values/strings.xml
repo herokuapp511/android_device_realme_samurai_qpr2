@@ -4,8 +4,8 @@
      SPDX-FileCopyrightText: 2026
      SPDX-License-Identifier: Apache-2.0
 
-     Local copies of LineageParts charging_control strings + samurai Speed
-     limit. Required for RRO aapt2 link AND runtime inflate in LineageParts
+     Local copies of LineageParts charging_control strings + samurai Charging
+     Speed Limit. Required for RRO aapt2 link AND runtime inflate in LineageParts
      (see charging.txt: @* package array IDs → NotFoundException).
 -->
 <resources>
@@ -18,6 +18,6 @@
     <string name="charging_control_target_time_title">Target time to full charge</string>
     <string name="charging_control_limit_title">Limit</string>
 
-    <string name="samurai_charging_speed_title">Speed limit</string>
-    <string name="samurai_charging_speed_summary">Peak charge current (cool_down). Default allows full VOOC/SuperVOOC.</string>
+    <string name="samurai_charging_speed_title">Charging Speed Limit</string>
+    <string name="samurai_charging_speed_summary">Default (full speed)</string>
 </resources>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
      Overlay of LineageParts charging_control_settings.
-     Adds samurai Speed limit (cool_down) at the bottom.
+     Adds samurai Charging Speed Limit (cool_down) at the bottom.
 
      Titles/arrays MUST be local to this RRO. Package-qualified
      @*org.lineageos.lineageparts refs crash inflate at runtime
@@ -38,7 +38,7 @@
         android:dependency="charging_control_enabled" />
 
     <!-- Peak current via cool_down; opens ChargingSpeed activity -->
-    <Preference
+    <lineageos.preference.RemotePreference
         android:key="samurai_charging_speed_limit"
         android:title="@string/samurai_charging_speed_title"
         android:summary="@string/samurai_charging_speed_summary"
@@ -47,6 +47,6 @@
         <intent
             android:targetPackage="org.lineageos.settings.chargespeed"
             android:targetClass="org.lineageos.settings.chargespeed.ChargingSpeedActivity" />
-    </Preference>
+    </lineageos.preference.RemotePreference>
 
 </PreferenceScreen>
