@@ -405,6 +405,9 @@ int LedVibratorDevice::on(int32_t timeoutMs) {
     char value[32];
     int ret;
 
+    snprintf(file, sizeof(file), "%s/%s", LED_DEVICE, "vmax");
+    write_value(file, "0x1f");
+
     snprintf(file, sizeof(file), "%s/%s", LED_DEVICE, "state");
     ret = write_value(file, "1");
     if (ret < 0)
@@ -443,6 +446,7 @@ ndk::ScopedAStatus Vibrator::getCapabilities(int32_t* _aidl_return) {
 
     if (ledVib.mDetected) {
         *_aidl_return |= IVibrator::CAP_PERFORM_CALLBACK;
+        *_aidl_return |= IVibrator::CAP_AMPLITUDE_CONTROL;
         ALOGD("QTI Vibrator reporting capabilities: %d", *_aidl_return);
         return ndk::ScopedAStatus::ok();
     }
@@ -507,18 +511,41 @@ ndk::ScopedAStatus Vibrator::perform(Effect effect, EffectStrength es, const std
 
     if (ledVib.mDetected) {
         if (const auto it = LED_EFFECTS.find(effect); it != LED_EFFECTS.end()) {
+            std::string gain_override = "0x80";
+            std::string vmax_override = "0x1f";
+            switch (es) {
+                case EffectStrength::LIGHT:
+                    gain_override = "0x30";
+                    vmax_override = "0x12";
+                    break;
+                case EffectStrength::MEDIUM:
+                    gain_override = "0x55";
+                    vmax_override = "0x18";
+                    break;
+                case EffectStrength::STRONG:
+                default:
+                    gain_override = "0x80";
+                    vmax_override = "0x1f";
+                    break;
+            }
+
             for (const auto &[path, value] : it->second) {
                 if (path == "SLEEP") {
                     usleep(atoi(value.c_str()) * 1000);
+                } else if (path == "/sys/class/leds/vibrator/gain") {
+                    ledVib.write_value(path.c_str(), gain_override.c_str());
+                } else if (path == "/sys/class/leds/vibrator/vmax") {
+                    ledVib.write_value(path.c_str(), vmax_override.c_str());
                 } else {
                     ledVib.write_value(path.c_str(), value.c_str());
                 }
             }
 
-            // Restore gain from persist prop
+            // Restore gain from persist prop and full vmax
             char gain[PROPERTY_VALUE_MAX]{};
             property_get("persist.vendor.vib.gain", gain, "0x55");
             ledVib.write_value("/sys/class/leds/vibrator/gain", gain);
+            ledVib.write_value("/sys/class/leds/vibrator/vmax", "0x1f");
 
             // Return magic value for play length so that we won't end up calling on() / off()
             playLengthMs = 150;
@@ -567,13 +594,23 @@ ndk::ScopedAStatus Vibrator::setAmplitude(float amplitude) {
     uint8_t tmp;
     int ret;
 
-    if (ledVib.mDetected)
-        return ndk::ScopedAStatus(AStatus_fromExceptionCode(EX_UNSUPPORTED_OPERATION));
-
     ALOGD("Vibrator set amplitude: %f", amplitude);
 
     if (amplitude <= 0.0f || amplitude > 1.0f)
         return ndk::ScopedAStatus(AStatus_fromExceptionCode(EX_ILLEGAL_ARGUMENT));
+
+    if (ledVib.mDetected) {
+        // Map amplitude [0.0, 1.0] to AW8697 gain [0x15, 0x80]
+        // 0x15 (~21) ensures the motor always vibrates smoothly even at lowest slider level
+        uint8_t gain = static_cast<uint8_t>(0x15 + amplitude * (0x80 - 0x15));
+        char gain_str[16];
+        snprintf(gain_str, sizeof(gain_str), "0x%02x", gain);
+        ret = ledVib.write_value("/sys/class/leds/vibrator/gain", gain_str);
+        if (ret != 0) {
+            return ndk::ScopedAStatus(AStatus_fromExceptionCode(EX_SERVICE_SPECIFIC));
+        }
+        return ndk::ScopedAStatus::ok();
+    }
 
     if (ff.mInExternalControl)
         return ndk::ScopedAStatus(AStatus_fromExceptionCode(EX_UNSUPPORTED_OPERATION));
