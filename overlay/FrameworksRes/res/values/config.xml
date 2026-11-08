@@ -1116,4 +1116,17 @@
 
     <!-- Path to fast charging status file to detect whether an oem fast charger is active -->
     <string name="config_oemFastChargerStatusPath" translatable="false">/sys/class/power_supply/battery/voocchg_ing</string>
+
+    <!-- The default intensity level for alarm vibrations. -->
+    <integer name="config_defaultAlarmVibrationIntensity">3</integer>
+    <!-- The default intensity level for haptic feedback. -->
+    <integer name="config_defaultHapticFeedbackIntensity">3</integer>
+    <!-- The default intensity level for media vibrations. -->
+    <integer name="config_defaultMediaVibrationIntensity">3</integer>
+    <!-- The default intensity level for notification vibrations. -->
+    <integer name="config_defaultNotificationVibrationIntensity">3</integer>
+    <!-- The default intensity level for ring vibrations. -->
+    <integer name="config_defaultRingVibrationIntensity">3</integer>
+    <!-- The default intensity level for keyboard vibrations. -->
+    <integer name="config_defaultKeyboardVibrationIntensity">3</integer>
 </resources>
