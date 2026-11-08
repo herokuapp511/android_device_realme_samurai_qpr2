@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026
 // SPDX-License-Identifier: Apache-2.0
 //
-// Injects "Speed limit" into LineageParts Charging control preference screen.
+// Injects "Charging Speed Limit" into LineageParts Charging control preference screen.
 //
 // Do NOT use resource_libs + @*org.lineageos.lineageparts refs for this XML:
 // aapt2 bakes foreign package IDs (e.g. 0x10xxxxxx) that fail at runtime with

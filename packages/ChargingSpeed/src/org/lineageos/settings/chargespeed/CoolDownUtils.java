@@ -96,6 +96,18 @@ public final class CoolDownUtils {
         return Settings.Secure.getInt(context.getContentResolver(), SECURE_KEY, 0);
     }
 
+    public static String getSummary(Context context) {
+        int level = loadSaved(context);
+        String[] values = context.getResources().getStringArray(R.array.charging_speed_values);
+        String[] entries = context.getResources().getStringArray(R.array.charging_speed_entries);
+        for (int i = 0; i < values.length; i++) {
+            if (String.valueOf(level).equals(values[i])) {
+                return entries[i];
+            }
+        }
+        return entries.length > 0 ? entries[0] : "";
+    }
+
     /** Restore user preference after boot (does not touch mmi_charging_enable). */
     public static void restore(Context context) {
         if (!isSupported()) {

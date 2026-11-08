@@ -42,6 +42,8 @@ public class ChargingSpeedActivity extends Activity {
                         try {
                             int level = Integer.parseInt(valuesStr[which]);
                             CoolDownUtils.saveAndApply(ChargingSpeedActivity.this, level);
+                            ChargingSpeedUpdater.notifyChanged(ChargingSpeedActivity.this,
+                                    "samurai_charging_speed_limit");
                         } catch (NumberFormatException ignored) {
                         }
                         dialog.dismiss();
