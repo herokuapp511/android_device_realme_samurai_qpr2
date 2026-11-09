@@ -51,6 +51,7 @@ BOARD_KERNEL_CMDLINE := \
     androidboot.console=ttyMSM0 \
     androidboot.hardware=qcom \
     androidboot.usbcontroller=a600000.dwc3 \
+    androidboot.super_partition=system \
     kpti=off \
     loop.max_part=7 \
     lpm_levels.sleep_disabled=1 \
@@ -149,7 +150,6 @@ BOARD_USES_SYSTEM_EXTIMAGE := true
 BOARD_USES_ODMIMAGE := true
 
 BOARD_SYSTEMIMAGE_FILE_SYSTEM_TYPE := ext4
-BOARD_SYSTEMIMAGE_PARTITION_TYPE := ext4
 BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := ext4
 BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE := ext4
 BOARD_SYSTEM_EXTIMAGE_FILE_SYSTEM_TYPE := ext4
