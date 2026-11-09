@@ -52,6 +52,7 @@ BOARD_KERNEL_CMDLINE := \
     androidboot.hardware=qcom \
     androidboot.usbcontroller=a600000.dwc3 \
     androidboot.super_partition=system \
+    androidboot.selinux=permissive \
     kpti=off \
     loop.max_part=7 \
     lpm_levels.sleep_disabled=1 \
