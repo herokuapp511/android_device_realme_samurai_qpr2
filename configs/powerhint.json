@@ -961,37 +961,37 @@
       "PowerHint": "CAMERA_LAUNCH",
       "Node": "CPUBigClusterMaxFreq",
       "Duration": 1000,
-      "Value": "9999999"
+      "Value": "2419200"
     },
     {
       "PowerHint": "CAMERA_LAUNCH",
       "Node": "CPUBigPlusClusterMaxFreq",
       "Duration": 1000,
-      "Value": "9999999"
+      "Value": "2956800"
     },
     {
       "PowerHint": "CAMERA_LAUNCH",
       "Node": "CPUBigClusterMinFreq",
       "Duration": 1000,
-      "Value": "9999999"
+      "Value": "2419200"
     },
     {
       "PowerHint": "CAMERA_LAUNCH",
       "Node": "CPUBigPlusClusterMinFreq",
       "Duration": 1000,
-      "Value": "9999999"
+      "Value": "2956800"
     },
     {
       "PowerHint": "CAMERA_LAUNCH",
       "Node": "CPULittleClusterMaxFreq",
       "Duration": 1000,
-      "Value": "9999999"
+      "Value": "1785600"
     },
     {
       "PowerHint": "CAMERA_LAUNCH",
       "Node": "CPULittleClusterMinFreq",
       "Duration": 1000,
-      "Value": "9999999"
+      "Value": "1785600"
     },
     {
       "PowerHint": "CAMERA_LAUNCH",
@@ -1219,37 +1219,37 @@
       "PowerHint": "CAMERA_SHOT",
       "Node": "CPUBigClusterMaxFreq",
       "Duration": 1000,
-      "Value": "9999999"
+      "Value": "2419200"
     },
     {
       "PowerHint": "CAMERA_SHOT",
       "Node": "CPUBigPlusClusterMaxFreq",
       "Duration": 1000,
-      "Value": "9999999"
+      "Value": "2956800"
     },
     {
       "PowerHint": "CAMERA_SHOT",
       "Node": "CPUBigClusterMinFreq",
       "Duration": 1000,
-      "Value": "9999999"
+      "Value": "2419200"
     },
     {
       "PowerHint": "CAMERA_SHOT",
       "Node": "CPUBigPlusClusterMinFreq",
       "Duration": 1000,
-      "Value": "9999999"
+      "Value": "2956800"
     },
     {
       "PowerHint": "CAMERA_SHOT",
       "Node": "CPULittleClusterMaxFreq",
       "Duration": 1000,
-      "Value": "9999999"
+      "Value": "1785600"
     },
     {
       "PowerHint": "CAMERA_SHOT",
       "Node": "CPULittleClusterMinFreq",
       "Duration": 1000,
-      "Value": "9999999"
+      "Value": "1785600"
     },
     {
       "PowerHint": "CAMERA_SHOT",

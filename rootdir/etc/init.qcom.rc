@@ -416,6 +416,7 @@ service health-hal-2-1.samurai /vendor/bin/hw/android.hardware.health@2.1-servic
     group system
     capabilities WAKE_ALARM BLOCK_SUSPEND
     file /dev/kmsg w
+    disabled
 
 service vendor.qti.hardware.display.composer /vendor/bin/hw/vendor.qti.hardware.display.composer-service
     override
