@@ -76,8 +76,8 @@ vendor/lib64/soundfx/libqcvirt.so
 vendor/lib64/soundfx/libshoebox.so
 
 # Audio KTV
-odm/lib/rfsa/adsp/libc++.so.1;MAKE_COPY_RULE_ONLY
-odm/lib/rfsa/adsp/libc++abi.so.1;MAKE_COPY_RULE_ONLY
+odm/lib/rfsa/adsp/libc++.so.1
+odm/lib/rfsa/adsp/libc++abi.so.1
 odm/lib/rfsa/adsp/libktvdrc.so
 odm/lib/rfsa/adsp/libktveffect.so
 odm/lib/rfsa/adsp/libktveq.so
