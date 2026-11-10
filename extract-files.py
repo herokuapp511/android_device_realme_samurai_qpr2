@@ -60,16 +60,45 @@ lib_fixups: lib_fixups_user_type = {
 }
 
 blob_fixups: blob_fixups_user_type = {
+    ('vendor/lib64/libOPPORectify.so', 'vendor/lib64/libCOppLceTonemapAPI.so'): blob_fixup()
+        .replace_needed('libstdc++.so', 'libstdc++_vendor.so'),
+    'vendor/lib64/libOGLManager.so': blob_fixup()
+        .clear_symbol_version('AHardwareBuffer_allocate')
+        .clear_symbol_version('AHardwareBuffer_describe')
+        .clear_symbol_version('AHardwareBuffer_lock')
+        .clear_symbol_version('AHardwareBuffer_release')
+        .clear_symbol_version('AHardwareBuffer_unlock'),
     ('odm/lib64/mediadrm/libwvdrmengine.so', 'odm/lib/mediadrm/libwvdrmengine.so'): blob_fixup()
         .add_needed('libcrypto_shim.so'),
     'vendor/lib64/hw/com.qti.chi.override.so': blob_fixup()
         .add_needed('libcamera_metadata_shim.so'),
-    ('odm/lib64/libarcsoft_dualcam_refocus_preview.so', 'vendor/lib64/libarcsoft_super_night_raw.so'): blob_fixup()
+    ('odm/lib64/libVDBlurlessAPI_v2.so', 'vendor/lib64/libarcsoft_dualcam_refocus_preview.so', 'vendor/lib64/libarcsoft_super_night_raw.so'): blob_fixup()
         .clear_symbol_version('remote_handle_close')
         .clear_symbol_version('remote_handle_invoke')
         .clear_symbol_version('remote_handle_open')
         .clear_symbol_version('remote_register_buf_attr')
         .clear_symbol_version('remote_register_buf'),
+    ('vendor/lib64/libarcsoft_hdrplus_hvx_5221_stub.so', 'vendor/lib64/libhvx_proxy_stub.so'): blob_fixup()
+        .clear_symbol_version('remote_handle64_close')
+        .clear_symbol_version('remote_handle64_invoke')
+        .clear_symbol_version('remote_handle64_open')
+        .clear_symbol_version('remote_register_buf_attr')
+        .clear_symbol_version('remote_register_buf')
+        .clear_symbol_version('remote_register_dma_handle')
+        .clear_symbol_version('remote_register_dma_handle_attr'),
+    'odm/lib64/libsnpe_dsp_domains_v2.so': blob_fixup()
+        .clear_symbol_version('remote_handle64_close')
+        .clear_symbol_version('remote_handle64_invoke')
+        .clear_symbol_version('remote_handle64_open')
+        .clear_symbol_version('remote_handle64_control')
+        .clear_symbol_version('remote_register_buf')
+        .clear_symbol_version('remote_register_buf_attr')
+        .clear_symbol_version('remote_register_dma_handle'),
+    'system_ext/lib64/lib-imsvideocodec.so': blob_fixup()
+        .clear_symbol_version('ANativeWindow_setBuffersTransform'),
+    'system_ext/lib64/libwfdclient.so': blob_fixup()
+        .clear_symbol_version('ANativeWindow_release')
+        .clear_symbol_version('ANativeWindow_acquire'),
     ('vendor/lib64/libdlbdsservice.so', 'vendor/lib/libstagefright_soft_ac4dec.so', 'vendor/lib/libstagefright_soft_ddpdec.so'): blob_fixup()
         .replace_needed('libstagefright_foundation.so', 'libstagefright_foundation-v33.so'),
     'vendor/etc/sensors/sns_reg_config': blob_fixup()
