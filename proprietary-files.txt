@@ -94,13 +94,13 @@ vendor/lib64/libbt-hidlclient.so|ff301380cf3c0ff68d2b7fcda3ba428ebf0a859e
 vendor/lib64/libbtnv.so|0c74a43550b939b9496b03b3285fa950cf560c48
 
 # Bluetooth (A2DP) - from LA.UM.9.1.r1-13700-SMxxx0.QSSI13.0
-vendor/lib/hw/audio.bluetooth_qti.default.so|6ce26888f5b67e3e211a7cfe11554d842162ae07
+vendor/lib/hw/audio.bluetooth_qti.default.so;DISABLE_CHECKELF|6ce26888f5b67e3e211a7cfe11554d842162ae07
 vendor/lib/hw/vendor.qti.hardware.bluetooth_audio@2.0-impl.so|7d9503fce83522d27bcdae531a4e0b320281f85f
-vendor/lib/btaudio_offload_if.so|a6a47f8397048e0286d6291b1996d6af16cbe241
+vendor/lib/btaudio_offload_if.so;DISABLE_CHECKELF|a6a47f8397048e0286d6291b1996d6af16cbe241
 vendor/lib/libbluetooth_audio_session_qti.so|0b306bac29ba1beff74c9e84785f0e77efb4402c
-vendor/lib64/hw/audio.bluetooth_qti.default.so|e5f1e800b423d026070c263e6d1120ca9665c427
+vendor/lib64/hw/audio.bluetooth_qti.default.so;DISABLE_CHECKELF|e5f1e800b423d026070c263e6d1120ca9665c427
 vendor/lib64/hw/vendor.qti.hardware.bluetooth_audio@2.0-impl.so|8bfbc542d600d4986b7c42281ffccfa75094ca5b
-vendor/lib64/btaudio_offload_if.so|8123f7b390fb69e80df8e28d069521b743633246
+vendor/lib64/btaudio_offload_if.so;DISABLE_CHECKELF|8123f7b390fb69e80df8e28d069521b743633246
 vendor/lib64/libbluetooth_audio_session_qti.so|78bb8ada323d87a93600009557949bd1552877f0
 
 # Bluetooth (Configstore) - from LA.UM.9.1.r1-13700-SMxxx0.QSSI13.0
@@ -574,7 +574,7 @@ vendor/bin/loc_launcher
 vendor/bin/lowi-server;DISABLE_CHECKELF
 vendor/bin/mlid
 vendor/bin/xtra-daemon
-vendor/bin/xtwifi-client
+vendor/bin/xtwifi-client;DISABLE_CHECKELF
 vendor/bin/xtwifi-inet-agent
 vendor/etc/init/android.hardware.gnss@2.1-service-qti.rc
 vendor/etc/vintf/manifest/android.hardware.gnss@2.1-service-qti.xml
@@ -595,7 +595,7 @@ vendor/lib64/libasn1cper.so
 vendor/lib64/libasn1crt.so
 vendor/lib64/libasn1crtx.so
 vendor/lib64/libbatching.so
-vendor/lib64/libcacertclient.so
+vendor/lib64/libcacertclient.so;DISABLE_CHECKELF
 vendor/lib64/libcdfw.so
 vendor/lib64/libcdfw_remote_api.so
 vendor/lib64/libdataitems.so
@@ -1423,7 +1423,7 @@ system_ext/lib64/libwfdcommonutils.so|27c411978b486ccc075862fa2eff450990b9d47a
 system_ext/lib64/libwfdconfigutils.so|d05d03298caf2e233c69689cf1fed0dd19a02be1
 system_ext/lib64/libwfddisplayconfig.so|2717202736b678390be7518ce6f69a63079e4217
 system_ext/lib64/libwfdmminterface.so|b560306dbc7b2bffb734c8eb6439dd3721f75c12
-system_ext/lib64/libwfdmmsink.so|a250fd4085ec04345db8067f11962f57c3b166f0
+system_ext/lib64/libwfdmmsink.so;DISABLE_CHECKELF|a250fd4085ec04345db8067f11962f57c3b166f0
 system_ext/lib64/libwfdmmsrc_system.so|69e08746a9557ee5fba3e02a8170032db0fa0105
 system_ext/lib64/libwfdnative.so;SYMLINK=system_ext/priv-app/WfdService/lib/arm64/libwfdnative.so|923acb22f26dc3aab5115cf685a161611e43c018
 system_ext/lib64/libwfdrtsp.so|14eec96c4fa615096c473d5a269ba315a53cfd00
