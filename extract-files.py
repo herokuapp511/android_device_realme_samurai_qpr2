@@ -39,7 +39,7 @@ lib_fixups: lib_fixups_user_type = {
     **lib_fixups,
     (
         'com.qualcomm.qti.dpm.api@1.0',
-        'libmmosal',
+        'libstdc++',
         'vendor.qti.hardware.fm@1.0',
         'vendor.qti.hardware.wifidisplaysession@1.0',
         'vendor.qti.imsrtpservice@3.0',
@@ -47,8 +47,13 @@ lib_fixups: lib_fixups_user_type = {
     (
         'libPolarrRender',
         'libQTEEConnector_system',
+        'libbluetooth_audio_session_qti_2_1',
         'libbsproxy',
         'libml_util',
+        'libmmparser_lite',
+        'libxtwifi_server_protocol',
+        'libxtwifi_server_protocol_uri_v3',
+        'vendor.qti.hardware.cacert@1.0',
         'vendor.qti.hardware.improvetouch.touchcompanion@1.0',
         'vendor.qti.qspmhal@1.0',
     ): lib_fixup_remove,
