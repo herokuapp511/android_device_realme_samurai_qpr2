@@ -279,7 +279,7 @@ PRODUCT_COPY_FILES += \
 
 # Health
 PRODUCT_PACKAGES += \
-    android.hardware.health-service.qti
+    android.hardware.health-service.samurai
 
 # Lineage Health — sole charge-limit owner (mmi_charging_enable).
 # RealmeParts SmartCharging is disabled so it cannot fight this node.

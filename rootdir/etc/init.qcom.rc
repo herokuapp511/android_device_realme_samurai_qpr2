@@ -401,23 +401,6 @@ on post-fs-data
 on property:ro.vendor.gsi.build.flavor=*
     restorecon /dev/loop-control
 
-service health-hal-2-1 /vendor/bin/hw/android.hardware.health@2.1-service
-    override
-    class hal charger
-    user system
-    group system
-    capabilities WAKE_ALARM BLOCK_SUSPEND
-    file /dev/kmsg w
-    disabled
-
-service health-hal-2-1.samurai /vendor/bin/hw/android.hardware.health@2.1-service.samurai
-    class hal charger
-    user system
-    group system
-    capabilities WAKE_ALARM BLOCK_SUSPEND
-    file /dev/kmsg w
-    disabled
-
 service vendor.qti.hardware.display.composer /vendor/bin/hw/vendor.qti.hardware.display.composer-service
     override
     class hal animation
