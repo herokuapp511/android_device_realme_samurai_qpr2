@@ -1,3 +1,6 @@
 allow cameraserver vendor_hal_commondcs_hwservice:hwservice_manager find;
 allow cameraserver init:unix_stream_socket connectto;
 allow cameraserver property_socket:sock_file write;
+
+# Torch strength control
+allow cameraserver sysfs_torch:file rw_file_perms;

@@ -42,6 +42,16 @@ on boot
     chown system audio /sys/class/leds/vibrator/haptic_audio
     chmod 0660 /sys/class/leds/vibrator/haptic_audio
 
+    # Torch control
+    chown cameraserver camera /sys/class/leds/led:torch_0/brightness
+    chown cameraserver camera /sys/class/leds/led:torch_1/brightness
+    chown cameraserver camera /sys/class/leds/led:switch_2/brightness
+    chown cameraserver camera /sys/class/leds/led:switch_3/brightness
+    chmod 0660 /sys/class/leds/led:torch_0/brightness
+    chmod 0660 /sys/class/leds/led:torch_1/brightness
+    chmod 0660 /sys/class/leds/led:switch_2/brightness
+    chmod 0660 /sys/class/leds/led:switch_3/brightness
+
     # goodix_fp
     chown system system /dev/goodix_fp
 

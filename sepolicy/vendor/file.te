@@ -9,3 +9,6 @@ type public_adsprpcd_file, file_type;
 type sysfs_fps, sysfs_type, fs_type;
 # samurai kernel uses the legacy oppo_display sysfs (not oplus_display)
 type sysfs_oppo_display, sysfs_type, fs_type;
+
+# Torch
+type sysfs_torch, sysfs_type, fs_type;
