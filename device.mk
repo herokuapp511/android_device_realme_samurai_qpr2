@@ -143,6 +143,7 @@ PRODUCT_PACKAGES += \
     libspkrprot \
     libtinycompress \
     libvolumelistener \
+    sound_trigger.primary.msmnile \
     vendor.qti.hardware.bluetooth_audio@2.0.vendor
 
 PRODUCT_COPY_FILES += \
