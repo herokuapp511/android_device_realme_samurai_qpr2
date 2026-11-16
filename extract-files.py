@@ -117,8 +117,6 @@ blob_fixups: blob_fixups_user_type = {
         .regex_replace('<HID>0</HID>', '<HID>1</HID>'),
     'system_ext/lib64/libwfdservice.so': blob_fixup()
         .replace_needed('android.media.audio.common.types-V4-cpp.so', 'android.media.audio.common.types-V5-cpp.so'),
-    'vendor/etc/faceunlock/resources.zip': blob_fixup()
-        .patch_file('blob-patches/OPFaceUnlock.py'),
 }  # fmt: skip
 
 module = ExtractUtilsModule(

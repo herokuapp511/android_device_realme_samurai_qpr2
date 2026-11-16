@@ -24,3 +24,17 @@ Front Camera | 16MP (wide)
 
 ## Device picture
 ![realme X2 Pro](https://image01.realme.net/general/20191112/1573530955589.jpg "realme X2 Pro in lunar white")
+
+## Build Dependencies & Repositories
+
+| Component | Target Path | Recommended Branch | Notes |
+|:---|:---|:---|:---|
+| Device tree | `device/realme/samurai` | `lineage-24.0` | Main tree |
+| Vendor blobs | `vendor/realme/samurai` | `lineage-24.0` | Base proprietary blobs |
+| Kernel source | `kernel/realme/sm8150` | `lineage-24.0` | 4.14 unified kernel |
+| Hardware Oplus | `hardware/oplus` | `lineage-24.0` | Oplus HAL interfaces |
+| RealmeParts | `packages/apps/RealmeParts` | `lineage-24.0` | Device settings & features |
+| Lunaris Dolby | `vendor/lunaris/dolby` | `main` | Dolby Atmos sound system |
+
+> **Note on Security Patch Level**: Vendor blobs are based on stock Android 11 (`RMX1931EX_11_F.12`) with Qualcomm QSSI 13 stack. Vendor SPL reflects the official stock release `2021-11-05`.
+

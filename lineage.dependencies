@@ -7,5 +7,10 @@
   {
     "repository": "vendor_lunaris_dolby",
     "target_path": "vendor/lunaris/dolby"
+  },
+  {
+    "repository": "android_packages_apps_RealmeParts",
+    "target_path": "packages/apps/RealmeParts",
+    "branch": "lineage-24.0"
   }
 ]

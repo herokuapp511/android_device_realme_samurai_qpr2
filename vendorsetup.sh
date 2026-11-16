@@ -25,9 +25,14 @@ clone_if_missing() {
     local branch="$3"
     local name="$4"
 
-    if [ -d "${dir}/.git" ] || [ -d "${dir}" ]; then
+    if [ -d "${dir}/.git" ]; then
         echo -e "${G}${name} found at ${dir}${N}"
         return 0
+    fi
+
+    if [ -d "${dir}" ]; then
+        echo -e "${R}${name} directory exists but is incomplete (.git missing), cleaning up...${N}"
+        rm -rf "${dir}"
     fi
 
     echo -e "${R}${name} not found${N}"
