@@ -441,12 +441,32 @@ int LedVibratorDevice::off()
     return ret;
 }
 
+int LedVibratorDevice::playWaveform(int waveformIndex, uint8_t gain, uint8_t vmax) {
+    char gain_str[16];
+    char vmax_str[16];
+    char seq_str[32];
+
+    snprintf(gain_str, sizeof(gain_str), "0x%02x", gain);
+    snprintf(vmax_str, sizeof(vmax_str), "0x%02x", vmax);
+    snprintf(seq_str, sizeof(seq_str), "0x00 0x%02x", waveformIndex);
+
+    write_value("/sys/class/leds/vibrator/ignore_store", "0");
+    write_value("/sys/class/leds/vibrator/gain", gain_str);
+    write_value("/sys/class/leds/vibrator/vmax", vmax_str);
+    write_value("/sys/class/leds/vibrator/seq", seq_str);
+    write_value("/sys/class/leds/vibrator/loop", "0x00 0x00");
+    write_value("/sys/class/leds/vibrator/brightness", "1");
+
+    return 0;
+}
+
 ndk::ScopedAStatus Vibrator::getCapabilities(int32_t* _aidl_return) {
     *_aidl_return = IVibrator::CAP_ON_CALLBACK;
 
     if (ledVib.mDetected) {
         *_aidl_return |= IVibrator::CAP_PERFORM_CALLBACK;
         *_aidl_return |= IVibrator::CAP_AMPLITUDE_CONTROL;
+        *_aidl_return |= IVibrator::CAP_COMPOSE_EFFECTS;
         ALOGD("QTI Vibrator reporting capabilities: %d", *_aidl_return);
         return ndk::ScopedAStatus::ok();
     }
@@ -510,48 +530,75 @@ ndk::ScopedAStatus Vibrator::perform(Effect effect, EffectStrength es, const std
     ALOGD("Vibrator perform effect %d", effect);
 
     if (ledVib.mDetected) {
-        if (const auto it = LED_EFFECTS.find(effect); it != LED_EFFECTS.end()) {
-            std::string gain_override = "0x80";
-            std::string vmax_override = "0x1f";
-            switch (es) {
-                case EffectStrength::LIGHT:
-                    gain_override = "0x30";
-                    vmax_override = "0x12";
-                    break;
-                case EffectStrength::MEDIUM:
-                    gain_override = "0x55";
-                    vmax_override = "0x18";
-                    break;
-                case EffectStrength::STRONG:
-                default:
-                    gain_override = "0x80";
-                    vmax_override = "0x1f";
-                    break;
-            }
+        uint8_t gain = 0x80;
+        uint8_t vmax = 0x1f;
+        int waveform = 2;
 
-            for (const auto &[path, value] : it->second) {
-                if (path == "SLEEP") {
-                    usleep(atoi(value.c_str()) * 1000);
-                } else if (path == "/sys/class/leds/vibrator/gain") {
-                    ledVib.write_value(path.c_str(), gain_override.c_str());
-                } else if (path == "/sys/class/leds/vibrator/vmax") {
-                    ledVib.write_value(path.c_str(), vmax_override.c_str());
-                } else {
-                    ledVib.write_value(path.c_str(), value.c_str());
-                }
-            }
+        switch (effect) {
+            case Effect::CLICK:
+                waveform = 2; // Sharp tactile click
+                if (es == EffectStrength::LIGHT) { gain = 0x40; vmax = 0x16; }
+                else if (es == EffectStrength::MEDIUM) { gain = 0x60; vmax = 0x1a; }
+                else { gain = 0x80; vmax = 0x1f; }
+                ledVib.playWaveform(waveform, gain, vmax);
+                break;
 
-            // Restore gain from persist prop and full vmax
-            char gain[PROPERTY_VALUE_MAX]{};
-            property_get("persist.vendor.vib.gain", gain, "0x55");
-            ledVib.write_value("/sys/class/leds/vibrator/gain", gain);
-            ledVib.write_value("/sys/class/leds/vibrator/vmax", "0x1f");
+            case Effect::DOUBLE_CLICK:
+                waveform = 2;
+                if (es == EffectStrength::LIGHT) { gain = 0x40; vmax = 0x16; }
+                else if (es == EffectStrength::MEDIUM) { gain = 0x60; vmax = 0x1a; }
+                else { gain = 0x80; vmax = 0x1f; }
+                ledVib.playWaveform(waveform, gain, vmax);
+                usleep(100 * 1000);
+                ledVib.playWaveform(waveform, gain, vmax);
+                break;
 
-            // Return magic value for play length so that we won't end up calling on() / off()
-            playLengthMs = 150;
-        } else {
-            return ndk::ScopedAStatus(AStatus_fromExceptionCode(EX_UNSUPPORTED_OPERATION));
+            case Effect::TICK:
+                waveform = 1; // Ultra crisp tick
+                if (es == EffectStrength::LIGHT) { gain = 0x25; vmax = 0x12; }
+                else if (es == EffectStrength::MEDIUM) { gain = 0x38; vmax = 0x16; }
+                else { gain = 0x50; vmax = 0x1a; }
+                ledVib.playWaveform(waveform, gain, vmax);
+                break;
+
+            case Effect::TEXTURE_TICK:
+                waveform = 1; // Subtle texture tick
+                if (es == EffectStrength::LIGHT) { gain = 0x18; vmax = 0x10; }
+                else if (es == EffectStrength::MEDIUM) { gain = 0x22; vmax = 0x12; }
+                else { gain = 0x30; vmax = 0x14; }
+                ledVib.playWaveform(waveform, gain, vmax);
+                break;
+
+            case Effect::HEAVY_CLICK:
+                waveform = 4; // Punchy deep click
+                if (es == EffectStrength::LIGHT) { gain = 0x60; vmax = 0x1a; }
+                else if (es == EffectStrength::MEDIUM) { gain = 0x75; vmax = 0x1d; }
+                else { gain = 0x80; vmax = 0x1f; }
+                ledVib.playWaveform(waveform, gain, vmax);
+                break;
+
+            case Effect::POP:
+                waveform = 5; // Soft pop
+                if (es == EffectStrength::LIGHT) { gain = 0x35; vmax = 0x14; }
+                else if (es == EffectStrength::MEDIUM) { gain = 0x50; vmax = 0x18; }
+                else { gain = 0x70; vmax = 0x1c; }
+                ledVib.playWaveform(waveform, gain, vmax);
+                break;
+
+            case Effect::THUD:
+                waveform = 4; // Damped thud
+                if (es == EffectStrength::LIGHT) { gain = 0x40; vmax = 0x14; }
+                else if (es == EffectStrength::MEDIUM) { gain = 0x55; vmax = 0x18; }
+                else { gain = 0x70; vmax = 0x1c; }
+                ledVib.playWaveform(waveform, gain, vmax);
+                break;
+
+            default:
+                return ndk::ScopedAStatus(AStatus_fromExceptionCode(EX_UNSUPPORTED_OPERATION));
         }
+
+        // Return 150ms play length so Android Framework does not send off() prematurely
+        playLengthMs = 150;
     } else {
         if (effect < Effect::CLICK ||
                 effect > Effect::HEAVY_CLICK)
@@ -581,7 +628,8 @@ ndk::ScopedAStatus Vibrator::perform(Effect effect, EffectStrength es, const std
 
 ndk::ScopedAStatus Vibrator::getSupportedEffects(std::vector<Effect>* _aidl_return) {
     if (ledVib.mDetected) {
-        *_aidl_return = {Effect::CLICK, Effect::DOUBLE_CLICK, Effect::TICK, Effect::HEAVY_CLICK};
+        *_aidl_return = {Effect::CLICK, Effect::DOUBLE_CLICK, Effect::TICK,
+                         Effect::HEAVY_CLICK, Effect::TEXTURE_TICK, Effect::POP, Effect::THUD};
     } else {
         *_aidl_return = {Effect::CLICK, Effect::DOUBLE_CLICK, Effect::TICK, Effect::THUD,
                          Effect::POP, Effect::HEAVY_CLICK};
@@ -635,25 +683,146 @@ ndk::ScopedAStatus Vibrator::setExternalControl(bool enabled) {
     return ndk::ScopedAStatus::ok();
 }
 
-ndk::ScopedAStatus Vibrator::getCompositionDelayMax(int32_t* maxDelayMs  __unused) {
+ndk::ScopedAStatus Vibrator::getCompositionDelayMax(int32_t* maxDelayMs) {
+    *maxDelayMs = 1000;
+    return ndk::ScopedAStatus::ok();
+}
+
+ndk::ScopedAStatus Vibrator::getCompositionSizeMax(int32_t* maxSize) {
+    *maxSize = 8;
+    return ndk::ScopedAStatus::ok();
+}
+
+ndk::ScopedAStatus Vibrator::getSupportedPrimitives(std::vector<CompositePrimitive>* supported) {
+    if (ledVib.mDetected) {
+        *supported = {
+            CompositePrimitive::NOOP,
+            CompositePrimitive::CLICK,
+            CompositePrimitive::THUD,
+            CompositePrimitive::SPIN,
+            CompositePrimitive::QUICK_RISE,
+            CompositePrimitive::SLOW_RISE,
+            CompositePrimitive::QUICK_FALL,
+            CompositePrimitive::LIGHT_TICK,
+        };
+        return ndk::ScopedAStatus::ok();
+    }
     return ndk::ScopedAStatus(AStatus_fromExceptionCode(EX_UNSUPPORTED_OPERATION));
 }
 
-ndk::ScopedAStatus Vibrator::getCompositionSizeMax(int32_t* maxSize __unused) {
-    return ndk::ScopedAStatus(AStatus_fromExceptionCode(EX_UNSUPPORTED_OPERATION));
+ndk::ScopedAStatus Vibrator::getPrimitiveDuration(CompositePrimitive primitive,
+                                                  int32_t* durationMs) {
+    switch (primitive) {
+        case CompositePrimitive::CLICK:
+            *durationMs = 15;
+            break;
+        case CompositePrimitive::LIGHT_TICK:
+            *durationMs = 10;
+            break;
+        case CompositePrimitive::THUD:
+            *durationMs = 30;
+            break;
+        case CompositePrimitive::SPIN:
+            *durationMs = 40;
+            break;
+        case CompositePrimitive::QUICK_RISE:
+            *durationMs = 30;
+            break;
+        case CompositePrimitive::SLOW_RISE:
+            *durationMs = 60;
+            break;
+        case CompositePrimitive::QUICK_FALL:
+            *durationMs = 30;
+            break;
+        case CompositePrimitive::NOOP:
+        default:
+            *durationMs = 0;
+            break;
+    }
+    return ndk::ScopedAStatus::ok();
 }
 
-ndk::ScopedAStatus Vibrator::getSupportedPrimitives(std::vector<CompositePrimitive>* supported __unused) {
-    return ndk::ScopedAStatus(AStatus_fromExceptionCode(EX_UNSUPPORTED_OPERATION));
-}
+ndk::ScopedAStatus Vibrator::compose(const std::vector<CompositeEffect>& composite,
+                                     const std::shared_ptr<IVibratorCallback>& callback) {
+    if (composite.empty()) {
+        return ndk::ScopedAStatus(AStatus_fromExceptionCode(EX_ILLEGAL_ARGUMENT));
+    }
+    if (composite.size() > 8) {
+        return ndk::ScopedAStatus(AStatus_fromExceptionCode(EX_ILLEGAL_ARGUMENT));
+    }
 
-ndk::ScopedAStatus Vibrator::getPrimitiveDuration(CompositePrimitive primitive __unused,
-                                                  int32_t* durationMs __unused) {
-    return ndk::ScopedAStatus(AStatus_fromExceptionCode(EX_UNSUPPORTED_OPERATION));
-}
+    if (ledVib.mDetected) {
+        for (const auto& effect : composite) {
+            if (effect.delayMs > 0) {
+                usleep(effect.delayMs * 1000);
+            }
 
-ndk::ScopedAStatus Vibrator::compose(const std::vector<CompositeEffect>& composite __unused,
-                                     const std::shared_ptr<IVibratorCallback>& callback __unused) {
+            if (effect.primitive == CompositePrimitive::NOOP) {
+                continue;
+            }
+
+            float scale = effect.scale;
+            if (scale < 0.0f) scale = 0.0f;
+            if (scale > 1.0f) scale = 1.0f;
+
+            uint8_t gain = static_cast<uint8_t>(0x20 + scale * (0x80 - 0x20));
+            uint8_t vmax = static_cast<uint8_t>(0x12 + scale * (0x1f - 0x12));
+            int waveform = 2;
+            int durationMs = 15;
+
+            switch (effect.primitive) {
+                case CompositePrimitive::CLICK:
+                    waveform = 2;
+                    durationMs = 15;
+                    break;
+                case CompositePrimitive::LIGHT_TICK:
+                    waveform = 1;
+                    durationMs = 10;
+                    gain = static_cast<uint8_t>(0x18 + scale * (0x50 - 0x18));
+                    vmax = static_cast<uint8_t>(0x10 + scale * (0x18 - 0x10));
+                    break;
+                case CompositePrimitive::THUD:
+                    waveform = 4;
+                    durationMs = 30;
+                    break;
+                case CompositePrimitive::SPIN:
+                    waveform = 3;
+                    durationMs = 40;
+                    break;
+                case CompositePrimitive::QUICK_RISE:
+                    waveform = 3;
+                    durationMs = 30;
+                    break;
+                case CompositePrimitive::SLOW_RISE:
+                    waveform = 5;
+                    durationMs = 60;
+                    break;
+                case CompositePrimitive::QUICK_FALL:
+                    waveform = 4;
+                    durationMs = 30;
+                    break;
+                default:
+                    waveform = 2;
+                    durationMs = 15;
+                    break;
+            }
+
+            ledVib.playWaveform(waveform, gain, vmax);
+            usleep(durationMs * 1000);
+        }
+
+        // Restore default gain & vmax
+        char default_gain[PROPERTY_VALUE_MAX]{};
+        property_get("persist.vendor.vib.gain", default_gain, "0x55");
+        ledVib.write_value("/sys/class/leds/vibrator/gain", default_gain);
+        ledVib.write_value("/sys/class/leds/vibrator/vmax", "0x1f");
+
+        if (callback != nullptr) {
+            callback->onComplete();
+        }
+        return ndk::ScopedAStatus::ok();
+    }
+
     return ndk::ScopedAStatus(AStatus_fromExceptionCode(EX_UNSUPPORTED_OPERATION));
 }
 
